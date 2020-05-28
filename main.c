@@ -1,63 +1,67 @@
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
+#include <string.h>
+#include <functions.h>
 
 int main(int argc, char *argv[]) {
-    int cValue = 0;
-    char* mValue = NULL;
-    int nValue = 0;
-    int bFlag = 0;
-    int c;
-
-    while ((c = getopt (argc, argv, "c:m:n:b")) != -1)
+    int numberImages = 0;
+    char* maskFilename = NULL;
+    int classificationThreshold = 0;
+    int binarizationThreshold = 0;
+    int flagShowResults = 0;
+    int opt = 0;
+    while ((opt = getopt (argc, argv, "c:u:n:m:b")) != -1)
     {
-      switch (c){
+      switch (opt){
         case 'c':
-            cValue = atoi(optarg);		  //cantidad imágenes.
-            printf("cantidad imagenes: %d\n", cValue);
+            numberImages = atoi(optarg);		  //cantidad de imágenes.
+            printf("Cantidad imagenes: %d\n", numberImages);
             break;
-        case 'm':
-            mValue = optarg;		      //máscara.
-            printf("mascara: %s\n", mValue);
+        case 'u':
+            binarizationThreshold = atoi(optarg);	      //umbral binarizar la imagen.
+            printf("Umbral para binarizar: %d\n", binarizationThreshold);
             break;
         case 'n':
-            nValue = atoi(optarg);	      //umbral.
-            printf("umbral de clasificacion: %d\n", nValue);
+            classificationThreshold = atoi(optarg);	      //umbral clasificacion.
+            printf("Umbral de clasificacion: %d\n", classificationThreshold);
+            break;
+        case 'm':
+            maskFilename = (char*)malloc(sizeof(char)*40);
+            maskFilename = strcpy(maskFilename, optarg);		      //máscara.
+            printf("Mascara: %s\n", maskFilename);
             break;
         case 'b':
-            bFlag = 1;				     //bandera.
-            printf("bandera: %d\n", bFlag);
+            flagShowResults = 1;				     //bandera.
+            printf("Bandera: %d\n", flagShowResults);
             break;
         default:
-            abort ();
+            break;
       }
     }
 
-    //Validaciones de entradas
-    if (cValue <= 0 || cValue > 6){
-        printf("ERROR. Cantidad de imagenes incorrecta\n");
-        return -1;
-	}
-    else if (fopen(mValue, "rb") == NULL){
-        printf("ERROR. Archivo de mascara no existe.\n");
-        return -1;
-    }
-    else if (nValue < 0){
-        printf("ERROR. Umbral invalido (negativo).\n");
-        return -1;
-    }
-        
-    for (int i = 1; i <= cValue; i++){
+    // sigue el programa (aqui valida la salida del getopt)
+    int validOpt = validateArgs(numberImages, binarizationThreshold, classificationThreshold, maskFilename);
+    printf("opciones validas: %d\n", validOpt);
+
+    free(maskFilename);
+    /*
+    for (int i = 1; i <= numberImages; i++){
         char imageName[40];
         char dir[40] = "imagen_";
         char imageNumber[100];
         int rows, columns;
         sprintf(imageNumber, "%d", i);
-        strcpy(imageName, strcat(strcat(dir, imageNumber), ".png"));
+        strcpy(imageName, strcat(strcat(dir, imageNumber), ".jpg"));
         FILE * fp;
-        fp = fopen(imageName, "r");
+        fp = fopen(imageName, "rb");
 
         if (! fp) {
             printf("Error. Archivo no encontrado / invalido.");
             abort();
         }
-    }
+        fclose(fp);
+    }*/
+    return 0;
+    //menu(numberImages, binarizationThreshold, classificationThreshold, maskFilename, flagShowResults);
 }
