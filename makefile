@@ -45,7 +45,7 @@ BUILD = build
 CC = gcc
 HDRS = -I $(HEADERS)/
 BLDS = $(BUILD)/
-FLAGS = -Wall -g3
+FLAGS = -Wall -g3 -ljpeg 
 DEBUG = -D DEBUG
 
 SRCS = $(wildcard $(SOURCES)/*.c)
