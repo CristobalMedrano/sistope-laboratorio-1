@@ -1,4 +1,4 @@
-#Version 1.1.0 - 09-05-2020
+#Version 1.1.1 - 09-05-2020
 #Makefile for Windows and Linux developed by Cristobal Medrano Alvarado.
 #Makefile para Windows y Linux desarrollado por Cristobal Medrano Alvardo.
 
@@ -42,11 +42,12 @@ SOURCES = src
 BUILD = build
 
 #Variables
-CC = gcc
-HDRS = -I $(HEADERS)/
+CC = gcc 
+HDRS = -I $(HEADERS)/ 
 BLDS = $(BUILD)/
-FLAGS = -Wall -g3 -ljpeg 
+FLAGS = -Wall -g3 
 DEBUG = -D DEBUG
+EXTERNAL_LIBRARIES = -lm -ljpeg
 
 SRCS = $(wildcard $(SOURCES)/*.c)
 OBJS = $(subst $(SOURCES)/, $(BUILD)/,$(patsubst %.c,%.o,$(SRCS)))
@@ -59,11 +60,11 @@ all: $(EXECUTABLE)
 
 # Normal compilation
 $(EXECUTABLE): $(OBJS) $(BUILD)/$(MAIN).o
-	$(CC) -o $@ $^ -lm
+	$(CC) -o $@ $^ $(EXTERNAL_LIBRARIES)
 	echo Compilation done. Executable: $(EXECUTE)
 
 $(BUILD)/%.o: $(SOURCES)/%.c | $(BUILD)
-	$(CC) $(FLAGS) $(HDRS) -c -o $@ $<
+	$(CC) $(FLAGS) $(HDRS) -c -o  $@ $<
 
 $(BUILD)/$(MAIN).o: $(MAIN).c
 	$(CC) $(FLAGS) $(HDRS) -c -o $(BUILD)/$(MAIN).o $(MAIN).c
@@ -73,7 +74,7 @@ $(BUILD)/$(MAIN).o: $(MAIN).c
 debug: debug_$(EXECUTABLE)
 
 debug_$(EXECUTABLE): $(DOBJS) $(BUILD)/$(DMAIN).o
-	$(CC) -o $@ $^ -lm
+	$(CC) -o $@ $^ $(EXTERNAL_LIBRARIES)
 	echo Compilation done. Executable: $(DEBUGEXECUTE)
 
 $(BUILD)/%_debug.o: $(SOURCES)/%.c | $(BUILD)

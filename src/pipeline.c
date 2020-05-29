@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <pipeline.h>
-#include <structs.h>
-#include <inttypes.h>
 #include <jpeglib.h>
-
+#include <inttypes.h>
+#include <structs.h>
+#include <pipeline.h>
 
 void initPipeline(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename, int flagShowResults){
     printf("hola");
@@ -20,7 +19,7 @@ void initPipeline(int numberImages, int binarizationThreshold, int classificatio
 int readJPG(char* filename, Image* image, struct jpeg_error_mgr* jerr){
     
 
-    /*struct jpeg_decompress_struct cinfo;
+    struct jpeg_decompress_struct cinfo;
     jpeg_create_decompress(&cinfo);
     cinfo.err = jpeg_std_error(jerr);
 
@@ -45,7 +44,7 @@ int readJPG(char* filename, Image* image, struct jpeg_error_mgr* jerr){
     image->image_buffer = (JSAMPLE*) malloc(sizeof(int)  *
                                        image->width  *
                                        image->height *
-                                       image->color_channel);*/
+                                       image->color_channel);
 
     return 1;
 }

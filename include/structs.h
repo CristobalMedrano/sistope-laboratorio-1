@@ -1,6 +1,5 @@
-#pragma once
-#include <stdint.h>
-#include <jpeglib.h>
+#ifndef _STRUCTS_H
+#define _STRUCTS_H
 
 typedef struct Image
 {
@@ -9,3 +8,5 @@ typedef struct Image
     uint32_t width; /*Columns*/
     uint32_t color_channel; /*"component" values*/
 } Image;
+
+#endif

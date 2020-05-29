@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <jpeglib.h>
+#include <structs.h>
 #include <pipeline.h>
 
 void menu(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename, int flagShowResults){

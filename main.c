@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <string.h>
-#include <jpeglib.h>
 #include <functions.h>
 #include <menu.h>
 
