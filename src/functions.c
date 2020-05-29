@@ -1,5 +1,6 @@
 #include <functions.h>
 #include <stdio.h>
+
 int validateArgs(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename){
     int val1 = validateNumberImages(numberImages);
     int val2 = validateBinarizationThreshold(binarizationThreshold);
@@ -13,6 +14,8 @@ int validateArgs(int numberImages, int binarizationThreshold, int classification
         return FALSE;
     }
 }
+
+
 int validateNumberImages(int numberImages){
     if (numberImages <= 0 ||numberImages > 6){
         printf("ERROR. Cantidad de imagenes incorrecta\n");
@@ -20,6 +23,7 @@ int validateNumberImages(int numberImages){
 	}
     return TRUE;
 }
+
 
 int validateBinarizationThreshold(int binarizationThreshold){
     if (binarizationThreshold < 0){
@@ -37,6 +41,7 @@ int validateBinarizationThreshold(int binarizationThreshold){
     
 }
 
+
 int validateClassificationThreshold(int classificationThreshold){
     if (classificationThreshold < 0){
         printf("ERROR. Umbral de clasificacion invalido (negativo).\n");
@@ -51,6 +56,7 @@ int validateClassificationThreshold(int classificationThreshold){
         return TRUE;
     }
 }
+
 
 int validateMaskFile(char* maskFilename){
     FILE* maskFile = fopen(maskFilename, "rb");
