@@ -3,6 +3,8 @@
 #include <getopt.h>
 #include <string.h>
 #include <functions.h>
+#include <menu.h>
+
 
 int main(int argc, char *argv[]) {
     int numberImages = 0;
@@ -42,9 +44,9 @@ int main(int argc, char *argv[]) {
 
     // sigue el programa (aqui valida la salida del getopt)
     int validOpt = validateArgs(numberImages, binarizationThreshold, classificationThreshold, maskFilename);
-    printf("opciones validas: %d\n", validOpt);
+    printf("Argumentos validos: %d\n", validOpt);
 
-    free(maskFilename);
+    
     /*
     for (int i = 1; i <= numberImages; i++){
         char imageName[40];
@@ -62,6 +64,8 @@ int main(int argc, char *argv[]) {
         }
         fclose(fp);
     }*/
+    
+    menu(numberImages, binarizationThreshold, classificationThreshold, maskFilename, flagShowResults);
+    free(maskFilename);
     return 0;
-    //menu(numberImages, binarizationThreshold, classificationThreshold, maskFilename, flagShowResults);
 }

@@ -9,3 +9,5 @@ int validateNumberImages(int numberImages);
 int validateBinarizationThreshold(int binarizationThreshold);
 int validateClassificationThreshold(int classificationThreshold);
 int validateMaskFile(char* maskFilename);
+
+#endif
