@@ -42,11 +42,12 @@ SOURCES = src
 BUILD = build
 
 #Variables
-CC = gcc
+CC = gcc -g
 HDRS = -I $(HEADERS)/
 BLDS = $(BUILD)/
 FLAGS = -Wall -g3
 DEBUG = -D DEBUG
+EXTERNAL_LIBRARIES = -lm -ljpeg
 
 SRCS = $(wildcard $(SOURCES)/*.c)
 OBJS = $(subst $(SOURCES)/, $(BUILD)/,$(patsubst %.c,%.o,$(SRCS)))
@@ -59,7 +60,7 @@ all: $(EXECUTABLE)
 
 # Normal compilation
 $(EXECUTABLE): $(OBJS) $(BUILD)/$(MAIN).o
-	$(CC) -o $@ $^ -lm
+	$(CC) -o $@ $^ $(EXTERNAL_LIBRARIES)
 	echo Compilation done. Executable: $(EXECUTE)
 
 $(BUILD)/%.o: $(SOURCES)/%.c | $(BUILD)
@@ -73,7 +74,7 @@ $(BUILD)/$(MAIN).o: $(MAIN).c
 debug: debug_$(EXECUTABLE)
 
 debug_$(EXECUTABLE): $(DOBJS) $(BUILD)/$(DMAIN).o
-	$(CC) -o $@ $^ -lm
+	$(CC) -o $@ $^ $(EXTERNAL_LIBRARIES)
 	echo Compilation done. Executable: $(DEBUGEXECUTE)
 
 $(BUILD)/%_debug.o: $(SOURCES)/%.c | $(BUILD)
