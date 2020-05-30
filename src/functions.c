@@ -1,5 +1,6 @@
-#include <functions.h>
 #include <stdio.h>
+#include <constants.h>
+#include <functions.h>
 
 int validateArgs(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename){
     int val1 = validateNumberImages(numberImages);

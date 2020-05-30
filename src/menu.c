@@ -1,43 +1,78 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <jpeglib.h>
-#include <structs.h>
-#include <pipeline.h>
+#include <menu.h>
 
-void menu(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename, int flagShowResults){
+void showMenu()
+{
+    printf("***------------------------------***\n");
+    printf("**                                **\n");
+    #ifdef DEBUG
+    printf("*     Laboratorio 1(Debug Mode)    *\n");
+    #endif
+    #ifndef DEBUG
+    printf("*           Laboratorio 1          *\n");
+    printf("*     Sistemas Operativos 1-2020   *\n");
+    #endif
+    printf("*            Version 0.1           *\n");
+    printf("**                                **\n");
+    printf("***------------------------------***\n");
+    printf("\n");
+    printf("1.- Iniciar programa.\n");
+    printf("2.- Acerca de.\n");
+    printf("3.- Salir.\n\n");
+    printf("Ingrese la opcion deseada: ");
+}
 
-    int option;
-
+void validateMenuOption(int* option, int min, int max)
+{
     do
     {
-        printf( "\n   + ----------------------------------------- +");
-        printf( "\n     Laboratorio 1 - Sistemas Operativos 1-2020 \n");
-        printf( "\n   1. Iniciar programa");
-        printf( "\n   2. Creditos" );
-        printf( "\n   3. Salir" );
-        printf( "\n   + ----------------------------------------- +");
-        printf( "\n\n   Introduzca una opcion (1-3): ");
-
-        scanf("%d", &option);
-
-        switch (option)
+        fflush(stdin);
+        if ((scanf("%d", option) == 0) || (*option < min || *option > max))
         {
-        case 1:
-            initPipeline(numberImages, binarizationThreshold, classificationThreshold, maskFilename, flagShowResults);
-            break;
-
-        case 2: 
-            printf( "\n   + ----------------------------------------- +");
-            printf("\n * Autores: Cristobal Medrano y Mauricio Soto \n");
-            printf(" * Universidad de Santiago de Chile \n");
-            break;
-
-        default:
-                if(option != 3)
-                    printf("\n Error. Esta opcion no esta permitida.\n");
-                break;
+            while (getchar() != '\n');
+            printf("Error. Ingrese una opcion valida: ");
+            fflush(stdin);
         }
-        
-    } while (option != 3);    
+         
+    } while (*option < min || *option > max);
+}
+  
+void cleanScreen()
+{
+    #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+        system("clear");
+    #endif
+ 
+    #if defined(_WIN32) || defined(_WIN64)
+        system("cls");
+    #endif
+}
+
+void pressToContinue()
+{
+    fflush(stdin);
+    printf("\nPresione intro para continuar...");
+    getchar();
+    #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+        getchar();
+    #endif      
+}
+
+void about()
+{
+	cleanScreen();
+    printf("Laboratorio 1 - Sistemas Operativos 1-2020.\n\n");
+    printf("Universidad de Santiago de Chile");
+    printf("Desarrollado por:- Cristobal Medrano A. (19.083.864-1)\n");
+    printf("                 - Mauricio Soto P. (19.603.152-9)\n");
+    printf("Contacto: cristobal.medrano@usach.cl - mauricio.soto.p@usach.cl\n");
+	pressToContinue();
+}
+
+void menu(int* option, int min, int max)
+{
+	cleanScreen();
+	showMenu();
+	validateMenuOption(option, min, max);
 }

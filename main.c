@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <string.h>
+#include <constants.h>
 #include <functions.h>
 #include <menu.h>
-
 
 int main(int argc, char *argv[]) {
     int numberImages = 0;
@@ -43,29 +43,43 @@ int main(int argc, char *argv[]) {
     }
 
     // sigue el programa (aqui valida la salida del getopt)
-    int validOpt = validateArgs(numberImages, binarizationThreshold, classificationThreshold, maskFilename);
-    printf("Argumentos validos: %d\n", validOpt);
-
-    
-    /*
-    for (int i = 1; i <= numberImages; i++){
-        char imageName[40];
-        char dir[40] = "imagen_";
-        char imageNumber[100];
-        int rows, columns;
-        sprintf(imageNumber, "%d", i);
-        strcpy(imageName, strcat(strcat(dir, imageNumber), ".jpg"));
-        FILE * fp;
-        fp = fopen(imageName, "rb");
-
-        if (! fp) {
-            printf("Error. Archivo no encontrado / invalido.");
-            abort();
+    int isValidOpt = validateArgs(numberImages, binarizationThreshold, classificationThreshold, maskFilename);
+    if (isValidOpt == TRUE) {
+        printf("Argumentos validos: True");
         }
-        fclose(fp);
-    }*/
+    else {
+        printf("Argumentos validos: False");
+    }
+
+    if (isValidOpt == TRUE)
+    {
+        showMenu();
+        int option;
+        do
+        {
+            option = NO_INPUT;
+            menu(&option, 1, 3);
     
-    menu(numberImages, binarizationThreshold, classificationThreshold, maskFilename, flagShowResults);
+            switch(option)
+            {
+                case RUN:
+                    //initPipeline(numberImages, binarizationThreshold, classificationThreshold, maskFilename);
+                    pressToContinue();
+                    break;
+    
+                case ABOUT:
+                    about();
+                    break;
+    
+                case EXIT:
+                    printf("Programa finalizado.\n");
+                    break;
+            }
+
+        }while(option != EXIT);
+        return 0;
+    }
+    
     free(maskFilename);
     return 0;
 }
