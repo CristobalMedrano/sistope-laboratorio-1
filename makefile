@@ -42,8 +42,8 @@ SOURCES = src
 BUILD = build
 
 #Variables
-CC = gcc 
-HDRS = -I $(HEADERS)/ 
+CC = gcc -g
+HDRS = -I $(HEADERS)/
 BLDS = $(BUILD)/
 FLAGS = -Wall -g3 
 DEBUG = -D DEBUG
