@@ -4,7 +4,7 @@
 
 void showMenu()
 {
-    printf("***------------------------------***\n");
+    printf("\n***------------------------------***\n");
     printf("**                                **\n");
     #ifdef DEBUG
     printf("*     Laboratorio 1(Debug Mode)    *\n");
@@ -19,8 +19,8 @@ void showMenu()
     printf("\n");
     printf("1.- Iniciar programa.\n");
     printf("2.- Acerca de.\n");
-    printf("3.- Salir.\n\n");
-    printf("Ingrese la opcion deseada: ");
+    printf("3.- Salir.\n");
+    printf("\nIngrese la opcion deseada: ");
 }
 
 void validateMenuOption(int* option, int min, int max)
@@ -62,10 +62,10 @@ void pressToContinue()
 void about()
 {
 	cleanScreen();
-    printf("Laboratorio 1 - Sistemas Operativos 1-2020.\n\n");
-    printf("Universidad de Santiago de Chile");
+    printf("Laboratorio 1 - Sistemas Operativos 1-2020.\n");
+    printf("Universidad de Santiago de Chile\n\n");
     printf("Desarrollado por:- Cristobal Medrano A. (19.083.864-1)\n");
-    printf("                 - Mauricio Soto P. (19.603.152-9)\n");
+    printf("                 - Mauricio Soto P. (19.603.152-9)\n\n");
     printf("Contacto: cristobal.medrano@usach.cl - mauricio.soto.p@usach.cl\n");
 	pressToContinue();
 }

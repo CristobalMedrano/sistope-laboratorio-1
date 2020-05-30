@@ -1,10 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <jpeglib.h>
 #include <getopt.h>
 #include <string.h>
 #include <constants.h>
+#include <structs.h>
 #include <functions.h>
 #include <menu.h>
+#include <pipeline.h>
 
 int main(int argc, char *argv[]) {
     int numberImages = 0;
@@ -44,12 +48,6 @@ int main(int argc, char *argv[]) {
 
     // sigue el programa (aqui valida la salida del getopt)
     int isValidOpt = validateArgs(numberImages, binarizationThreshold, classificationThreshold, maskFilename);
-    if (isValidOpt == TRUE) {
-        printf("Argumentos validos: True");
-        }
-    else {
-        printf("Argumentos validos: False");
-    }
 
     if (isValidOpt == TRUE)
     {
@@ -63,7 +61,7 @@ int main(int argc, char *argv[]) {
             switch(option)
             {
                 case RUN:
-                    //initPipeline(numberImages, binarizationThreshold, classificationThreshold, maskFilename);
+                    initPipeline(numberImages, binarizationThreshold, classificationThreshold, maskFilename, flagShowResults);
                     pressToContinue();
                     break;
     
@@ -77,9 +75,9 @@ int main(int argc, char *argv[]) {
             }
 
         }while(option != EXIT);
+        free(maskFilename);
         return 0;
     }
-    
     free(maskFilename);
     return 0;
 }
