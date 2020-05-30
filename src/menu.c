@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <jpeglib.h>
+#include <structs.h>
+#include <pipeline.h>
 
 void menu(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename, int flagShowResults){
 
@@ -20,7 +24,7 @@ void menu(int numberImages, int binarizationThreshold, int classificationThresho
         switch (option)
         {
         case 1:
-            /* code */
+            initPipeline(numberImages, binarizationThreshold, classificationThreshold, maskFilename, flagShowResults);
             break;
 
         case 2: 
