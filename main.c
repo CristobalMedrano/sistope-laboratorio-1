@@ -77,7 +77,8 @@ int main(int argc, char *argv[]) {
         }while(option != EXIT);
         free(maskFilename);
         return 0;
+    } else {
+        free(maskFilename);
+        return 0;
     }
-    free(maskFilename);
-    return 0;
 }
