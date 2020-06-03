@@ -6,5 +6,6 @@ Image readImage(int imageNumber);
 int readJPG(char* filename, Image* image, struct jpeg_error_mgr* jerr);
 void writeImage(Image image, int imageNumber);
 int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mgr* jerr);
+Image convertGrayScale(Image image);
 
 #endif

@@ -14,6 +14,7 @@ void initPipeline(int numberImages, int binarizationThreshold, int classificatio
     {
         //read()
         Image image = readImage(i);
+        image = convertGrayScale(image);
         image = applyLaplacianFilter(image, maskFilename);
         writeImage(image, i);
     }
@@ -118,7 +119,7 @@ void writeImage(Image image, int imageNumber){
     struct jpeg_error_mgr jerr;
 
     if (!writeJPG(&image, imageNumber, filename, &jerr)){
-        printf("fallo readJPG");
+        printf("fallo writeJPG");
     }else
     {
         printf("imagen guardada con exito.\n");
@@ -163,4 +164,33 @@ int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mg
     fclose(fp);
     
     return TRUE;
+}
+
+Image convertGrayScale(Image image){
+
+    int totalComponents = image.height*image.width*image.color_channel;
+    int R, G, B;
+    int Y;
+
+    Image convertedImage;
+    convertedImage.height = image.height;
+    convertedImage.width = image.width;
+    convertedImage.color_channel = 1;
+    convertedImage.image_buffer = NULL;
+    convertedImage.image_buffer = (JSAMPLE*) malloc(sizeof(int) *
+                                       convertedImage.width  *
+                                       convertedImage.height *
+                                       convertedImage.color_channel);
+    
+    int pos = 0;
+    for (int i = 0; i < totalComponents; i+=3){
+        R = image.image_buffer[i];
+        G = image.image_buffer[i+1];
+        B = image.image_buffer[i+2];
+        Y = R*0.3 + G*0.59 + B*0.11; // ecuación de luminiscencia
+        convertedImage.image_buffer[pos] = Y;
+        pos++;
+    }
+
+    return convertedImage;
 }
