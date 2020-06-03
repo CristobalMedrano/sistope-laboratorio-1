@@ -10,13 +10,21 @@
 #include <pipeline.h>
 
 void initPipeline(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename, int flagShowResults){
+    Image normalImage;
+    Image grayScaleImage;
+    Image laplacianFilterImage;
     for (int i = 1; i <= numberImages; i++)
     {
         //read()
-        Image image = readImage(i);
-        image = convertGrayScale(image);
-        image = applyLaplacianFilter(image, maskFilename);
-        writeImage(image, i);
+        normalImage = readImage(i);
+        grayScaleImage = convertGrayScale(normalImage);
+        laplacianFilterImage = applyLaplacianFilter(grayScaleImage, maskFilename);
+
+        writeImage(laplacianFilterImage, i);
+
+        free(normalImage.image_buffer);
+        free(grayScaleImage.image_buffer);
+        free(laplacianFilterImage.image_buffer);
     }
 }
 
@@ -123,9 +131,6 @@ void writeImage(Image image, int imageNumber){
     }else
     {
         printf("imagen guardada con exito.\n");
-        if(image.image_buffer != NULL){
-            free(image.image_buffer);
-        }
     }
     
 }
