@@ -4,7 +4,7 @@
 Image applyLaplacianFilter(Image image, char* maskFilename);
 int** getLaplacianFilter(char* maskFilename);
 int** getLaplacianFilterMask(FILE* maskFile);
-int** getImageMatrix(int width, int height, JSAMPLE* buffer);
+int** getImageMatrix(int height, int width, JSAMPLE* buffer);
 int** createMatrix(int n, int m);
 int** appendMatrix(int** matrix, int posX, int posY, int value);
 void showMatrix(int n, int m, int** matrix);

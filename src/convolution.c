@@ -25,7 +25,7 @@ Image applyLaplacianFilter(Image image, char* maskFilename){
     buffer = image.image_buffer;
 
     laplacianFilter = getLaplacianFilter(maskFilename);
-    imageMatrix = getImageMatrix(width, height, buffer);
+    imageMatrix = getImageMatrix(height, width, buffer);
 
     convertedImage.height = image.height;
     convertedImage.width = image.width;
@@ -36,9 +36,9 @@ Image applyLaplacianFilter(Image image, char* maskFilename){
                                     convertedImage.height *
                                     convertedImage.color_channel);
     
-    for (i = 1; i < width - 1; i++)
+    for (i = 1; i < height - 1; i++)
     {
-        for (j = 1; j < height - 1; j++)
+        for (j = 1; j < width - 1; j++)
         {
             pixel = laplacianFilter[0][0]*imageMatrix[i-1][j-1] +
                     laplacianFilter[0][1]*imageMatrix[i-1][j]   +
@@ -57,22 +57,22 @@ Image applyLaplacianFilter(Image image, char* maskFilename){
     //showMatrix(MASK_ROW, MASK_COL, laplacianFilter);
     //showMatrix(width, height, imageMatrix);
 
-    freeMatrix(imageMatrix, width);
+    freeMatrix(imageMatrix, height);
     freeMatrix(laplacianFilter, MASK_ROW);
     return convertedImage;
 }
 
-int** getImageMatrix(int width, int height, JSAMPLE* buffer){
+int** getImageMatrix(int height, int width, JSAMPLE* buffer){
     int** imageMatrix = NULL;
     int i = 0;
     int j = 0;
     int loc = 0;
 
-    imageMatrix = createMatrix(width, height);
+    imageMatrix = createMatrix(height, width);
     if (imageMatrix != NULL){
-        for (i = 1; i < width-1; i++)
+        for (i = 1; i < height-1; i++)
         {
-            for (j = 1; j < height-1; j++)
+            for (j = 1; j < width-1; j++)
             {
                 imageMatrix = appendMatrix(imageMatrix, i, j, buffer[loc]);
                 loc++;
