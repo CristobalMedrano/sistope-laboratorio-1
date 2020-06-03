@@ -11,7 +11,7 @@ int getRowCount(FILE* maskFile);
 int getColCount(char* string, char* separator);
 int isValidColumns(FILE* maskFile, int rowCount);
 void strip(char* string, char* character);
-int* splitToNumber(char* string, char* separator, int* len);
+int* splitToNumber(char* string, char* separator);
 int* newArray (int initalLen);
 int arrayLen(int* array);
 int* arrayAppend(int* array, int pos, int number);

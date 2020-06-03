@@ -6,6 +6,7 @@
 #include <jpeglib.h>
 #include <inttypes.h>
 #include <structs.h>
+#include <convolution.h>
 #include <pipeline.h>
 
 void initPipeline(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename, int flagShowResults){
@@ -13,6 +14,7 @@ void initPipeline(int numberImages, int binarizationThreshold, int classificatio
     {
         //read()
         Image image = readImage(i);
+        image = applyLaplacianFilter(image, maskFilename);
         writeImage(image, i);
     }
 }
@@ -100,7 +102,7 @@ Image readImage(int imageNumber){
         printf("fallo readJPG");
     }
 
-    printPixels(image);
+    //printPixels(image);
 
     return image;
 }
@@ -122,7 +124,6 @@ void writeImage(Image image, int imageNumber){
         printf("imagen guardada con exito.\n");
         if(image.image_buffer != NULL){
             free(image.image_buffer);
-            image.image_buffer = NULL;
         }
     }
     
@@ -143,7 +144,7 @@ int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mg
     cinfo.image_width = image->width;
     cinfo.image_height = image->height;
     cinfo.input_components = image->color_channel;
-    cinfo.in_color_space = JCS_RGB;
+    cinfo.in_color_space = JCS_GRAYSCALE;
 
     cinfo.err = jpeg_std_error(jerr); 
     jpeg_set_defaults(&cinfo);

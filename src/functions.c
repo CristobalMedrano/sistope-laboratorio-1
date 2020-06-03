@@ -88,7 +88,7 @@ int IsValidMatrixMask(FILE* maskFile){
         return FALSE;
     } else {
         row = getRowCount(maskFile);
-        if (row == 3){
+        if (row == MASK_ROW){
             valid = isValidColumns(maskFile, row);
             return valid;
         } else {
@@ -115,7 +115,7 @@ int isValidColumns(FILE* maskFile, int rowCount){
                 strip(string, "\r");
                 len = getColCount(string, " ");
             }
-            if (len != 3){
+            if (len != MASK_COL){
                 return FALSE;
             }
         }
@@ -139,7 +139,7 @@ int getColCount(char* string, char* separator){
     }
 }
 
-int* splitToNumber(char* string, char* separator, int* len){
+int* splitToNumber(char* string, char* separator){
     int* array = NULL;
     char* token = NULL;
     int i = 0;
@@ -155,7 +155,6 @@ int* splitToNumber(char* string, char* separator, int* len){
                 token = strtok(NULL, separator);
                 i++;
             }
-            *len = i;
             return array;
         }
         return array;
