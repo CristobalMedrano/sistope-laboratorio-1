@@ -7,4 +7,6 @@
 #define ABOUT 2
 #define EXIT 3
 #define NO_INPUT -1
+#define MASK_ROW 3
+#define MASK_COL 3
 #endif
