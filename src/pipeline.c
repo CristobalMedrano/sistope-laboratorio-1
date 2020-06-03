@@ -13,14 +13,16 @@ void initPipeline(int numberImages, int binarizationThreshold, int classificatio
     Image normalImage;
     Image grayScaleImage;
     Image laplacianFilterImage;
+    Image binarizedImage;
     for (int i = 1; i <= numberImages; i++)
     {
         //read()
         normalImage = readImage(i);
         grayScaleImage = convertGrayScale(normalImage);
         laplacianFilterImage = applyLaplacianFilter(grayScaleImage, maskFilename);
+        binarizedImage = binarizeImage(grayScaleImage, binarizationThreshold);
 
-        writeImage(laplacianFilterImage, i);
+        writeImage(binarizedImage, i);
 
         free(normalImage.image_buffer);
         free(grayScaleImage.image_buffer);
@@ -198,4 +200,19 @@ Image convertGrayScale(Image image){
     }
 
     return convertedImage;
+}
+
+Image binarizeImage(Image image, int binarizationThreshold){
+    int len = image.height * image.width;
+
+    for (int i = 0; i < len; i++){
+        if (image.image_buffer[i] > binarizationThreshold){
+            image.image_buffer[i] = 255;
+        }
+        else{
+            image.image_buffer[i] = 0;
+        }
+    }
+
+    return image;
 }
