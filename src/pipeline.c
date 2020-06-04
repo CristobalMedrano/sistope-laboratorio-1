@@ -32,10 +32,10 @@ void initPipeline(int numberImages, int binarizationThreshold, int classificatio
 
         if(flagShowResults){
             if(nearlyBlack == 1){
-                printf("|  image_%d.jpg   |         yes         |\n", i);
+                printf("|     image_%d    |          yes        |\n", i);
             }
             else{
-                printf("|  image_%d.jpg   |          no         |\n", i);
+                printf("|     image_%d    |          no         |\n", i);
             }
             printf("|----------------|---------------------|\n");
         }
