@@ -20,11 +20,27 @@ int validateArgs(int numberImages, int binarizationThreshold, int classification
 
 
 int validateNumberImages(int numberImages){
-    if (numberImages <= 0 ||numberImages > 6){
-        printf("ERROR. Cantidad de imagenes incorrecta\n");
+    char filename[40] = "";
+    int i = 0;
+    int fileStatus = 0;
+    if (numberImages <= 0){
+        printf("ERROR. Cantidad de imagenes incorrecta, debe ingresar 1 o mas imagenes.\n");
         return FALSE;
-	}
-    return TRUE;
+	} else {
+        for (i = 1; i <= numberImages; i++)
+        {
+            if (sprintf(filename, "imagen_%i.jpg", i) >= 0){
+                fileStatus = isValidFile(filename);
+                if (fileStatus == FALSE){
+                    return FALSE;
+                }
+            }
+            else{
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
 }
 
 
@@ -68,16 +84,12 @@ int validateMaskFile(char* maskFilename){
         return FALSE;
     } else {
         isValid = IsValidMatrixMask(maskFile);
-        invalidMaskFile(isValid);
+        if (isValid == FALSE){
+            printf("ERROR. El archivo de mascara no es valido.\n");
+            printf("Verifique que la matriz sea de 3x3.\n");
+        }
         fclose(maskFile);
         return isValid;
-    }
-}
-
-void invalidMaskFile(int isValid){
-    if (isValid == FALSE){
-        printf("ERROR. El archivo de mascara no es valido.\n");
-        printf("Verifique que la matriz sea de 3x3.\n");
     }
 }
 
@@ -208,4 +220,21 @@ int getRowCount(FILE* maskFile){
         return rowCount;
     }
     return rowCount;
+}
+
+int isValidFile(char* filename){
+    FILE* file = NULL;
+    if(filename == NULL){
+        printf("El nombre del archivo no es válido.");
+        return FALSE;
+    } else {
+        file = fopen(filename, "rb");
+        if (file != NULL){
+            fclose(file);
+            return TRUE;
+        } else {
+            printf("El archivo de imagen '%s', no existe o se encuentra en otro directorio.\n", filename);
+            return FALSE;
+        }
+    }
 }

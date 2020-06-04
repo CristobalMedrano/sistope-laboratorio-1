@@ -15,6 +15,6 @@ int* splitToNumber(char* string, char* separator);
 int* newArray (int initalLen);
 int arrayLen(int* array);
 int* arrayAppend(int* array, int pos, int number);
-void invalidMaskFile(int isValid);
+int isValidFile(char* filename);
 
 #endif
