@@ -14,6 +14,13 @@ void initPipeline(int numberImages, int binarizationThreshold, int classificatio
     Image grayScaleImage;
     Image laplacianFilterImage;
     Image binarizedImage;
+
+    if(flagShowResults){
+            printf("\n|----------------|---------------------|\n");
+            printf("|      image     |     nearly black    |\n");
+            printf("|----------------|---------------------|\n");
+    }
+
     for (int i = 1; i <= numberImages; i++)
     {
         //read()
@@ -21,6 +28,17 @@ void initPipeline(int numberImages, int binarizationThreshold, int classificatio
         grayScaleImage = convertGrayScale(normalImage);
         laplacianFilterImage = applyLaplacianFilter(grayScaleImage, maskFilename);
         binarizedImage = binarizeImage(laplacianFilterImage, binarizationThreshold);
+        int nearlyBlack = classifyImage(binarizedImage, classificationThreshold);
+
+        if(flagShowResults){
+            if(nearlyBlack == 1){
+                printf("|  image_%d.jpg   |         yes         |\n", i);
+            }
+            else{
+                printf("|  image_%d.jpg   |          no         |\n", i);
+            }
+            printf("|----------------|---------------------|\n");
+        }
 
         writeImage(binarizedImage, i);
 
@@ -104,8 +122,8 @@ Image readImage(int imageNumber){
     char imageName[40];
     sprintf(fileName, "./imagen_%i.jpg", imageNumber);
     sprintf(imageName, "image_%i.jpg", imageNumber);
-    printf("Filename: %s\n",fileName);
-    printf("imageName: %s\n",imageName);
+    //printf("Filename: %s\n",fileName);
+    //printf("imageName: %s\n",imageName);
     Image image;
     struct jpeg_error_mgr jerr;
 
@@ -130,11 +148,7 @@ void writeImage(Image image, int imageNumber){
 
     if (!writeJPG(&image, imageNumber, filename, &jerr)){
         printf("fallo writeJPG");
-    }else
-    {
-        printf("imagen guardada con exito.\n");
     }
-    
 }
 
 int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mgr* jerr){
@@ -215,4 +229,25 @@ Image binarizeImage(Image image, int binarizationThreshold){
     }
 
     return image;
+}
+
+int classifyImage(Image image, int classificationThreshold){
+
+    int len = image.height * image.width;
+    int count = 0;
+
+    for (int i = 0; i < len; i++){
+        if(image.image_buffer[i] == 0){
+            count++;
+        }
+    }
+
+    float blacknessPercentage = (count*100)/len;
+
+    if (blacknessPercentage >= classificationThreshold){
+        return TRUE;
+    }
+    else{
+        return FALSE;
+    }
 }
