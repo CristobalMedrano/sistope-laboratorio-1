@@ -8,5 +8,6 @@ void writeImage(Image image, int imageNumber);
 int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mgr* jerr);
 Image convertGrayScale(Image image);
 Image binarizeImage(Image image, int binarizationThreshold);
+int classifyImage(Image image, int classificationThreshold);
 
 #endif
