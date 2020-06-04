@@ -33,8 +33,8 @@ int validateBinarizationThreshold(int binarizationThreshold){
         printf("ERROR. Umbral de binarizacion invalido (negativo).\n");
         return FALSE;
     }
-    else if (binarizationThreshold > 100){
-        printf("ERROR. Umbral de binarizacion invalido (sobre 100).\n");
+    else if (binarizationThreshold > 255){
+        printf("ERROR. Umbral de binarizacion invalido (sobre 255).\n");
         return FALSE;
     }
     else

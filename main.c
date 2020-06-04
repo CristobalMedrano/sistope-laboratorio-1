@@ -51,7 +51,8 @@ int main(int argc, char *argv[]) {
 
     if (isValidOpt == TRUE)
     {
-        showMenu();
+        initPipeline(numberImages, binarizationThreshold, classificationThreshold, maskFilename, flagShowResults);
+        /*showMenu();
         int option;
         do
         {
@@ -74,7 +75,7 @@ int main(int argc, char *argv[]) {
                     break;
             }
 
-        }while(option != EXIT);
+        }while(option != EXIT);*/
         free(maskFilename);
         return 0;
     } else {
