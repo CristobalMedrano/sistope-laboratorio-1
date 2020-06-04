@@ -13,14 +13,16 @@ void initPipeline(int numberImages, int binarizationThreshold, int classificatio
     Image normalImage;
     Image grayScaleImage;
     Image laplacianFilterImage;
+    Image binarizedImage;
     for (int i = 1; i <= numberImages; i++)
     {
         //read()
         normalImage = readImage(i);
         grayScaleImage = convertGrayScale(normalImage);
         laplacianFilterImage = applyLaplacianFilter(grayScaleImage, maskFilename);
+        binarizedImage = binarizeImage(laplacianFilterImage, binarizationThreshold);
 
-        writeImage(laplacianFilterImage, i);
+        writeImage(binarizedImage, i);
 
         free(normalImage.image_buffer);
         free(grayScaleImage.image_buffer);
@@ -150,7 +152,7 @@ int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mg
     cinfo.image_width = image->width;
     cinfo.image_height = image->height;
     cinfo.input_components = image->color_channel;
-    cinfo.in_color_space = JCS_GRAYSCALE;
+    //cinfo.in_color_space = JCS_GRAYSCALE;
 
     cinfo.err = jpeg_std_error(jerr); 
     jpeg_set_defaults(&cinfo);
@@ -198,4 +200,19 @@ Image convertGrayScale(Image image){
     }
 
     return convertedImage;
+}
+
+Image binarizeImage(Image image, int binarizationThreshold){
+    int len = image.height * image.width;
+
+    for (int i = 0; i < len; i++){
+        if (image.image_buffer[i] > binarizationThreshold){
+            image.image_buffer[i] = 255;
+        }
+        else{
+            image.image_buffer[i] = 0;
+        }
+    }
+
+    return image;
 }
