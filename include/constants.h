@@ -9,4 +9,11 @@
 #define NO_INPUT -1
 #define MASK_ROW 3
 #define MASK_COL 3
+
+// Options
+#define MIN_OPTS 9
+#define ENDPTR_LEN 12
+#define MASKFILENAME_LEN 12
+// End Options
+
 #endif
