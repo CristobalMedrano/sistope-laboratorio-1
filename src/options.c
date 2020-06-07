@@ -1,9 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <jpeglib.h>
+#include <inttypes.h>
 #include <getopt.h>
+#include <string.h>
 #include <ctype.h>
 #include <constants.h>
-#include <string.h>
+#include <structs.h>
+#include <functions.h>
 #include <options.h>
 
 void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binarizationThreshold, int* classificationThreshold, char** maskFilename, int* flagShowResults) {
@@ -25,7 +30,7 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                     exit(EXIT_FAILURE);
                 } else {
                     if (!isInteger(optarg, "la cantidad de imagenes")) exit(EXIT_FAILURE);
-                    *numberImages = argument;
+                    *numberImages = atoi(optarg);
                 }
                 //printf("Cantidad imagenes: %d\n", numberImages);
                 break;
@@ -36,7 +41,7 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                     exit(EXIT_FAILURE);
                 } else {
                     if (!isInteger(optarg, "el umbral de binarizacion")) exit(EXIT_FAILURE);
-                    *binarizationThreshold = argument; //umbral binarizar la imagen.
+                    *binarizationThreshold = atoi(optarg); //umbral binarizar la imagen.
                     //printf("Umbral para binarizar: %d\n", binarizationThreshold);
                 }
                 break;
@@ -47,7 +52,7 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                     exit(EXIT_FAILURE);
                 } else {
                     if (!isInteger(optarg, "el umbral de clasificacion")) exit(EXIT_FAILURE);
-                    *classificationThreshold = argument; //umbral binarizar la imagen.
+                    *classificationThreshold = atoi(optarg); //umbral binarizar la imagen.
                     //printf("Umbral de clasificacion: %d\n", classificationThreshold);
                 }
                 break;
@@ -58,7 +63,8 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                     exit(EXIT_FAILURE);
                 } else {
                     *maskFilename = (char * ) malloc(sizeof(char) * MASKFILENAME_LEN);
-                    *maskFilename = strcpy(*maskFilename, optarg); //máscara.
+                    if (*maskFilename != NULL) *maskFilename = strcpy(*maskFilename, optarg); //máscara.
+
                 }
                 //printf("Mascara: %s\n", maskFilename);
                 break;
@@ -142,6 +148,23 @@ int validateNumberImages(int numberImages){
     }
 }
 
+int isValidFile(char* filename){
+    FILE* file = NULL;
+    if(filename == NULL){
+        printf("El nombre del archivo no es válido.");
+        return FALSE;
+    } else {
+        file = fopen(filename, "rb");
+        if (file != NULL){
+            fclose(file);
+            return TRUE;
+        } else {
+            printf("El archivo de imagen '%s', no existe o se encuentra en otro directorio.\n", filename);
+            return FALSE;
+        }
+    }
+}
+
 
 int validateBinarizationThreshold(int binarizationThreshold){
     if (binarizationThreshold < 0){
@@ -155,10 +178,8 @@ int validateBinarizationThreshold(int binarizationThreshold){
     else
     {
         return TRUE;
-    }
-    
+    }    
 }
-
 
 int validateClassificationThreshold(int classificationThreshold){
     if (classificationThreshold < 0){
@@ -174,7 +195,6 @@ int validateClassificationThreshold(int classificationThreshold){
     }
 }
 
-
 int validateMaskFile(char* maskFilename){
     FILE* maskFile = fopen(maskFilename, "rb");
     int isValid = FALSE;
@@ -182,7 +202,7 @@ int validateMaskFile(char* maskFilename){
         printf("ERROR. Archivo de mascara no existe.\n");
         return FALSE;
     } else {
-        isValid = IsValidMatrixMask(maskFile);
+        isValid = isValidMatrixMask(maskFile);
         if (isValid == FALSE){
             printf("ERROR. El archivo de mascara no es valido.\n");
             printf("Verifique que la matriz sea de 3x3.\n");
@@ -192,7 +212,7 @@ int validateMaskFile(char* maskFilename){
     }
 }
 
-int IsValidMatrixMask(FILE* maskFile){
+int isValidMatrixMask(FILE* maskFile){
     int row = 0;
     int valid = FALSE;
     if (maskFile == NULL){
@@ -250,62 +270,6 @@ int getColCount(char* string, char* separator){
     }
 }
 
-int* splitToNumber(char* string, char* separator){
-    int* array = NULL;
-    char* token = NULL;
-    int i = 0;
-    
-    if (string == NULL){
-        return NULL;
-    } else {
-        array = newArray(1);
-        if (array != NULL) {
-            token = strtok(string, separator);
-            while( token != NULL ) {
-                array = arrayAppend(array, i, atoi(token));
-                token = strtok(NULL, separator);
-                i++;
-            }
-            return array;
-        }
-        return array;
-    }
-}
-
-int* newArray (int initalLen){
-    int* array = NULL;
-    if (initalLen <= 0){
-        return NULL;
-    } else {
-        array = (int*)malloc(sizeof(int)*initalLen);
-        return array;
-    }
-}
-
-int* arrayAppend(int* array, int pos, int number){
-    if (array == NULL){
-        return NULL;
-    } else {
-        array = realloc(array, sizeof(array)*2);
-        if (array != NULL){
-            array[pos] = number;
-            return array;
-        } else {
-            return array;
-        }
-    }
-}
-
-void strip(char* string, char* character){
-    char* token = NULL;
-    if (string != NULL){
-        token = strtok(string, character);
-        while( token != NULL ) {
-            token = strtok(NULL, character);
-        }
-    }
-}
-
 int getRowCount(FILE* maskFile){
     int rowCount    = 0;
     char line[256]  = "";
@@ -319,21 +283,4 @@ int getRowCount(FILE* maskFile){
         return rowCount;
     }
     return rowCount;
-}
-
-int isValidFile(char* filename){
-    FILE* file = NULL;
-    if(filename == NULL){
-        printf("El nombre del archivo no es válido.");
-        return FALSE;
-    } else {
-        file = fopen(filename, "rb");
-        if (file != NULL){
-            fclose(file);
-            return TRUE;
-        } else {
-            printf("El archivo de imagen '%s', no existe o se encuentra en otro directorio.\n", filename);
-            return FALSE;
-        }
-    }
 }

@@ -1,20 +1,11 @@
 #ifndef _FUNCTIONS_H
 #define _FUNCTIONS_H
 
-int validateArgs(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename);
-int validateNumberImages(int numberImages);
-int validateBinarizationThreshold(int binarizationThreshold);
-int validateClassificationThreshold(int classificationThreshold);
-int validateMaskFile(char* maskFilename);
-int IsValidMatrixMask(FILE* maskFile);
-int getRowCount(FILE* maskFile);
-int getColCount(char* string, char* separator);
-int isValidColumns(FILE* maskFile, int rowCount);
+void printPixels(Image image);
 void strip(char* string, char* character);
-int* splitToNumber(char* string, char* separator);
-int* newArray (int initalLen);
-int arrayLen(int* array);
-int* arrayAppend(int* array, int pos, int number);
-int isValidFile(char* filename);
+int** createMatrix(int n, int m);
+int** appendMatrix(int** matrix, int posX, int posY, int value);
+void showMatrix(int n, int m, int** matrix);
+void freeMatrix(int** matrix, int row);
 
 #endif

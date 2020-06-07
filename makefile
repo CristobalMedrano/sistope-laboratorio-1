@@ -1,4 +1,4 @@
-#Version 1.1.1 - 09-05-2020
+#Version 1.2 - 06-06-2020
 #Makefile for Windows and Linux developed by Cristobal Medrano Alvarado.
 #Makefile para Windows y Linux desarrollado por Cristobal Medrano Alvardo.
 
@@ -21,18 +21,16 @@ ifeq ($(OS_detected), Windows)
 	EXTENSION = .exe
 	EXECUTABLE = $(EXECUTABLE_NAME)$(EXTENSION)
 	EXECUTE = $(EXECUTABLE)
-	DEBUGEXECUTE = debug_$(EXECUTABLE)
     REMOVE = -del
-	FILES = $(BUILD)\*.o 
+	FILES = $(BUILD)\*.o
 
 endif
 ifeq ($(OS_detected), Linux)
 	EXTENSION = .out
 	EXECUTABLE = $(EXECUTABLE_NAME)$(EXTENSION)
 	EXECUTE = ./$(EXECUTABLE)
-	DEBUGEXECUTE = ./debug_$(EXECUTABLE)
     REMOVE = -rm -f
-	FILES = $(BUILD)/*.o 
+	FILES = $(BUILD)/*.o
 endif
 
 #Modules, headers and build folders.
@@ -45,49 +43,36 @@ BUILD = build
 CC = gcc -g
 HDRS = -I $(HEADERS)/
 BLDS = $(BUILD)/
-FLAGS = -Wall -g3 
-DEBUG = -D DEBUG
+FLAGS = -Wall -g3
 EXTERNAL_LIBRARIES = -lm -ljpeg
 
 SRCS = $(wildcard $(SOURCES)/*.c)
 OBJS = $(subst $(SOURCES)/, $(BUILD)/,$(patsubst %.c,%.o,$(SRCS)))
-DOBJS = $(subst $(SOURCES)/, $(BUILD)/,$(patsubst %.c,%_debug.o,$(SRCS)))
 MAIN = main
-DMAIN = $(MAIN)_debug
+GLOBAL_DEPENDS = $(HEADERS)/structs.h $(HEADERS)/constants.h
 
-.SILENT: all debug clean $(EXECUTABLE) debug_$(EXECUTABLE)
+.SILENT: all clean $(EXECUTABLE)
 all: $(EXECUTABLE)
 
 # Normal compilation
 $(EXECUTABLE): $(OBJS) $(BUILD)/$(MAIN).o
 	$(CC) -o $@ $^ $(EXTERNAL_LIBRARIES)
-	echo Compilation done. Executable: $(EXECUTE)
+	@echo Compilation done. Executable: $(EXECUTE)
 
-$(BUILD)/%.o: $(SOURCES)/%.c | $(BUILD)
-	$(CC) $(FLAGS) $(HDRS) -c -o  $@ $<
+$(BUILD)/%.o: $(SOURCES)/%.c $(HEADERS)/%.h $(GLOBAL_DEPENDS) | $(BUILD)
+	$(CC) $(FLAGS) $(HDRS) -c $< -o $@
 
-$(BUILD)/$(MAIN).o: $(MAIN).c
-	$(CC) $(FLAGS) $(HDRS) -c -o $(BUILD)/$(MAIN).o $(MAIN).c
-# End normal compilation
-
-# Debug compilation
-debug: debug_$(EXECUTABLE)
-
-debug_$(EXECUTABLE): $(DOBJS) $(BUILD)/$(DMAIN).o
-	$(CC) -o $@ $^ $(EXTERNAL_LIBRARIES)
-	echo Compilation done. Executable: $(DEBUGEXECUTE)
-
-$(BUILD)/%_debug.o: $(SOURCES)/%.c | $(BUILD)
-	$(CC) $(FLAGS) $(HDRS) $(DEBUG) -c -o $@ $<
-
-$(BUILD)/$(DMAIN).o: $(MAIN).c
-	$(CC) $(FLAGS) $(HDRS) $(DEBUG) -c -o $(BUILD)/$(DMAIN).o $(MAIN).c
-# End debug compilation.
+$(BUILD)/$(MAIN).o: $(MAIN).c $(GLOBAL_DEPENDS)
+	$(CC) $(FLAGS) $(HDRS) -c $(MAIN).c -o $(BUILD)/$(MAIN).o
 
 $(BUILD):
 	mkdir $@
-.PHONY: clean
+
+# End normal compilation
 clean:
 	$(REMOVE) $(FILES)
 	$(REMOVE) $(EXECUTABLE) debug_$(EXECUTABLE)
-	echo Full wipe.
+	@echo Full wipe.
+
+.PHONY: clean
+
