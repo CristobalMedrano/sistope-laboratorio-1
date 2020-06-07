@@ -12,7 +12,7 @@ endif
 
 #Executable name.
 #Nombre del ejecutable.
-EXECUTABLE_NAME = laboratorio_1
+EXECUTABLE_NAME = pipeline
 
 #Select the variables to change depending on the OS.
 #Se seleccionan las variables a cambiar dependiendo del SO. 
