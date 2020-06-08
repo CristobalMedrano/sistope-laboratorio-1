@@ -8,9 +8,11 @@
 #include <functions.h>
 #include <read.h>
 
-//Entradas:
+//Entrada:
 //  int imageNumber: Entero que representa el número asociado a una imagen.
+//
 //Funcionamiento: Función encargada de realizar la primera etapa del pipeline, es decir, lee la imagen "i".
+//
 //Salida: Retorna la estructura de la imagen, útil para desarrollar las próximas etapas.
 Image readImage(int imageNumber){
     // Se inicializa la estructura imagen
