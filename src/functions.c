@@ -1,3 +1,4 @@
+//Librerías incluídas
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -8,15 +9,22 @@
 #include <structs.h>
 #include <functions.h>
 
+//Entrada:
+//  Image image: Estructura con imagen almacenada.
+//
+//Funcionamiento: Procedimiento que permite visualizar por pantalla información asociada
+//                a una imagen, como sus dimensiones, canales y pixeles.
+//
+//Salida: No tiene por ser procedimiento.
 void printPixels(Image image){
-    
+    // Se muestra por pantalla el alto, ancho y los canales que posee la imagen de entrada.
     printf("width = %" PRIu32 "\n", image.width);
     printf("height = %" PRIu32 "\n", image.height);
     printf("channels = %" PRIu32 "\n", image.color_channel);
-    
+    // Se inicializan variables
     uint8_t num = 0;
     int loc = 0;
-
+    // Se recorre la imagen e imprime por pantalla el valor de sus pixeles.
     for (int i = 0; i < image.height; i++)
     {
         for (int j = 0; j < image.width*image.color_channel; j++)
@@ -29,6 +37,13 @@ void printPixels(Image image){
     }
 }
 
+//Entradas:
+//  char* string:
+//  char* character:
+//
+//Funcionamiento: Procedimiento que
+//
+//Salida: no tiene por ser procedimiento.
 void strip(char* string, char* character){
     char* token = NULL;
     if (string != NULL){
@@ -39,6 +54,13 @@ void strip(char* string, char* character){
     }
 }
 
+//Entradas:
+//  int n:
+//  int m:
+//
+//Funcionamiento: Función que
+//
+//Salida: 
 int** createMatrix(int n, int m){
     int i = 0;
     int** matrix = NULL;
@@ -55,6 +77,15 @@ int** createMatrix(int n, int m){
     return NULL;
 }
 
+//Entradas:
+//  int** matrix:
+//  int posX:
+//  int posY:
+//  int value:
+//
+//Funcionamiento: Función que
+//
+//Salida: 
 int** appendMatrix(int** matrix, int posX, int posY, int value){
     if (matrix == NULL || posX < 0 || posY < 0){
         return NULL;
@@ -64,6 +95,14 @@ int** appendMatrix(int** matrix, int posX, int posY, int value){
     }
 }
 
+//Entradas:
+//  int n:
+//  int m:
+//  int** matrix:
+//
+//Funcionamiento: Procedimiento que
+//
+//Salida: No tiene por ser procedimiento.
 void showMatrix(int n, int m, int** matrix){
     if(NULL != matrix && n >= 0 && m >= 0)
     {
@@ -105,6 +144,13 @@ void showMatrix(int n, int m, int** matrix){
     }   
 }
 
+//Entradas:
+//  int** matrix:
+//  int row:
+//
+//Funcionamiento: Procedimiento que
+//
+//Salida: No tiene por ser procedimiento.
 void freeMatrix(int** matrix, int row)
 {
     if (NULL != matrix) 
