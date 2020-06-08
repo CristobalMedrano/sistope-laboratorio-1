@@ -53,7 +53,7 @@ int readJPG(char* filename, Image* image, struct jpeg_error_mgr* jerr){
     // Se configuran las rutinas de error JPEG normales
     cinfo.err = jpeg_std_error(jerr);
 
-    // Se abre el archivo de entrada con "b" para leer archivos binarios.
+    // Se abre el archivo de entrada modo lectura con "b" para leer archivos binarios.
     FILE *fp = fopen(filename, "rb");
     if (fp == NULL) {
         printf("Error al abrir el archivo %s\n", filename);
