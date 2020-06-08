@@ -45,6 +45,6 @@ Image convertGrayScale(Image image){
         convertedImage.image_buffer[pos] = Y;// se guarda el valor obtenido en ecuación
         pos++;
     }
-    // Se retorna la imagen convertida a escala de grises
+    // Se retorna la estructura de la imagen convertida a escala de grises.
     return convertedImage;
 }
