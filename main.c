@@ -15,7 +15,9 @@
 
 //Entradas: argc: Numero de argumentos ingresados al momento de ejecutar el programa.
 //          argv: Arreglo con los argumentos del programa.
+//
 //Funcionamiento: Funcion principal del programa, en esta funcion se lleva a cabo el pipeline de 6 etapas.
+//
 //Salidas: Retorna 0 si la ejecución fue correcta y 1 si la ejecución fue incorrecta.
 int main(int argc, char *argv[]) {
     // Opciones ingresadas por el usuario.
@@ -55,7 +57,7 @@ int main(int argc, char *argv[]) {
             laplacianFilterImage = applyLaplacianFilter(grayScaleImage, maskFilename);
             // Se binariza la imagen segun el umbral ingresado por el usuario.
             binarizedImage = binarizeImage(laplacianFilterImage, binarizationThreshold);
-            // Se analiza la propiedad de si es completamente negra.
+            // Se analiza la propiedad segun el umbral ingresado por el usuario.
             isNearlyBlack = classifyImage(binarizedImage, classificationThreshold);
 
             // Si el usuario lo indica, se muestran los resultados por pantalla.
