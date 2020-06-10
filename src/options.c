@@ -43,7 +43,7 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                 argument = strtol(optarg, &endptr, ENDPTR_LEN);
                 // Se verifica si la opcion tiene acompaniado un argumento, de no ser asi, se termina
                 // la ejecucion del programa indicando previamente el error.
-                if (optarg != 0 && argument == 0) {
+                if (optarg != 0 && argument == 0 && strcmp(endptr, "") != 0) {
                     showCorrectUse(argv);
                     exit(EXIT_FAILURE);
                 } else {
@@ -57,7 +57,7 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                 argument = strtol(optarg, &endptr, ENDPTR_LEN);
                 // Se verifica si la opcion tiene acompaniado un argumento, de no ser asi, se termina
                 // la ejecucion del programa indicando previamente el error.
-                if (optarg != 0 && argument == 0) {
+                if (optarg != 0 && argument == 0 && strcmp(endptr, "") != 0) {
                     showCorrectUse(argv);
                     exit(EXIT_FAILURE);
                 } else {
@@ -71,7 +71,7 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                 argument = strtol(optarg, &endptr, ENDPTR_LEN);
                 // Se verifica si la opcion tiene acompaniado un argumento, de no ser asi, se termina
                 // la ejecucion del programa indicando previamente el error.
-                if (optarg != 0 && argument == 0) {
+                if (optarg != 0 && argument == 0 && strcmp(endptr, "") != 0) {
                     showCorrectUse(argv);
                     exit(EXIT_FAILURE);
                 } else {
@@ -145,7 +145,7 @@ int isInteger(char* optarg, char* type)
                 optarg[i] == comma ||
                 optarg[i] == dash ||
                 isalpha(optarg[i])){
-                printf("Error. El valor para %s debe ser un entero positivo.\n", type);
+                printf("ERROR. El valor para %s debe ser un entero positivo.\n", type);
                 // Si contiene algun caracter, retorna falso.
                 return FALSE;
             }
