@@ -4,9 +4,24 @@
 #include <stdint.h>
 #include <string.h>
 #include <jpeglib.h>
-#include <structs.h>
-#include <constants.h>
-#include <write.h>
+
+// Esta estructura contiene la informacion escencial de la imagen.
+// Esta definida tal cual como lo indica la libreria jpeglib.
+typedef struct Image
+{
+    // image_buffer es un puntero que contiene un arreglo con la informacion de la imagen, cada dato representa un pixel de valor 0 a 255.
+    // En RGB se usan 3 valores consecutivos para definir un pixel (Es decir buffer[i], buffer[i+1], buffer[i+2] = 1 pixel).
+    // En Escala de grises se usa solo un valor para definir un pixel. (Es decir buffer[i] = 1 pixel)
+    JSAMPLE *image_buffer; /*Points to large array of R,G,B-order data*/
+    // height es un entero sin signo de 32 bits que contiene la cantidad de filas de la imagen (alto de la imagen) 
+    uint32_t height; /*Rows*/
+    // width es un entero sin signo de 32 bits que contiene la cantidad de columnas de la imagen (ancho de la imagen) 
+    uint32_t width; /*Columns*/
+    // color_channel es un entero sin signo de 32 bits que contiene el numero de canales de color (para RGB son 3 canales y para escala de grises 1). 
+    uint32_t color_channel; /*"component" values*/
+} Image;
+
+int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mgr* jerr);
 
 //Entradas:
 //  Image image: Estructura con la imagen a escribir.
@@ -15,8 +30,10 @@
 //Funcionamiento: Procedimiento que realiza la segunda parte de la quinta etapa del pipeline, es decir, escribir en disco
 //                la imagen resultante en formato jpg.
 //Salida: No tiene por ser un procedimiento.
-void writeImage(Image image, int imageNumber){
-    // Se procede a generar y dar formato al nombre del archivo de salida
+int main(int argc, char const *argv[])
+{
+    Image image;
+    int imageNumber = 0;
     char filename[50] = "";
     char number[100];
     sprintf(number, "%d", imageNumber);
@@ -30,6 +47,7 @@ void writeImage(Image image, int imageNumber){
         // En caso de error, se muestra mensaje por pantalla.
         printf("fallo writeJPG");
     }
+    return 0;
 }
 
 //Entradas:
