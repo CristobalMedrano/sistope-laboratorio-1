@@ -20,6 +20,11 @@ typedef struct Image
     uint32_t color_channel; /*"component" values*/
 } Image;
 
+int readJPG(char* filename, Image* image, struct jpeg_error_mgr* jerr);
+void printPixels(Image image);
+Image readImage(int imageNumber);
+
+
 //Entradas: 
 //  char* filename: Nombre del archivo de imagen
 //  Image* image: puntero a estructura con imagen almacenada
@@ -111,10 +116,15 @@ void printPixels(Image image){
     }
 }
 
-int main(int argc, char const *argv[]){
+//Entrada:
+//  int imageNumber: Entero que representa el número asociado a una imagen.
+//
+//Funcionamiento: Función encargada de realizar la primera etapa del pipeline, es decir, lee la imagen "i".
+//
+//Salida: Retorna la estructura de la imagen, útil para desarrollar las próximas etapas.
+Image readImage(int imageNumber){
     // Se inicializa la estructura imagen
     Image image;
-    int imageNumber = 0;
     // Se inicializa el nombre del archivo e imagen "i", según la entrada.
     char fileName[40] = "";
     char imageName[40] = "";
@@ -131,6 +141,13 @@ int main(int argc, char const *argv[]){
     //printPixels(image);
     
     // Se retorna la estructura con imagen leida
-    //return image;
+    return image;
+}
+
+int main(int argc, char const *argv[])
+{
+    Image normalImage = {};
+    int imageNumber;
+    normalImage = readImage(imageNumber);
     return 0;
 }
