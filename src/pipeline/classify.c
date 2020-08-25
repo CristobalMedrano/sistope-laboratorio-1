@@ -3,9 +3,32 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <jpeglib.h>
-#include <structs.h>
-#include <constants.h>
-#include <classify.h>
+
+// Definicion de un booleano
+#define FALSE 0
+#define TRUE 1
+// Opciones para mostrar un borde en los resultados de la bandera showResults.
+#define BORDER 0
+
+// Esta estructura contiene la informacion escencial de la imagen.
+// Esta definida tal cual como lo indica la libreria jpeglib.
+typedef struct Image
+{
+    // image_buffer es un puntero que contiene un arreglo con la informacion de la imagen, cada dato representa un pixel de valor 0 a 255.
+    // En RGB se usan 3 valores consecutivos para definir un pixel (Es decir buffer[i], buffer[i+1], buffer[i+2] = 1 pixel).
+    // En Escala de grises se usa solo un valor para definir un pixel. (Es decir buffer[i] = 1 pixel)
+    JSAMPLE *image_buffer; /*Points to large array of R,G,B-order data*/
+    // height es un entero sin signo de 32 bits que contiene la cantidad de filas de la imagen (alto de la imagen) 
+    uint32_t height; /*Rows*/
+    // width es un entero sin signo de 32 bits que contiene la cantidad de columnas de la imagen (ancho de la imagen) 
+    uint32_t width; /*Columns*/
+    // color_channel es un entero sin signo de 32 bits que contiene el numero de canales de color (para RGB son 3 canales y para escala de grises 1). 
+    uint32_t color_channel; /*"component" values*/
+} Image;
+
+int classifyImage(Image image, int classificationThreshold);
+void showImageResultTitle(int numberImages, int flagShowResults);
+void showImageResultBody(int numberImages, int imageNumber, int flagShowResults, int isNearlyBlack);
 
 //Entradas:
 //  Image image: Estructura con la imagen proveniente de la cuarta etapa (binarización).
@@ -119,3 +142,14 @@ void showImageResultBody(int numberImages, int imageNumber, int flagShowResults,
         printf("\n");
     }
 }
+
+int main(int argc, char const *argv[])
+{
+    int classificationThreshold = 0;
+    Image binarizedImage = {};
+    int isNearlyBlack = FALSE;
+    isNearlyBlack = classifyImage(binarizedImage, classificationThreshold);
+    printf("Es casi negra %d", isNearlyBlack);
+    return 0;
+}
+
