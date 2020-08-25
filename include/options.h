@@ -14,4 +14,5 @@ int isValidMatrixMask(FILE* maskFile);
 int isValidColumns(FILE* maskFile, int rowCount);
 int getRowCount(FILE* maskFile);
 int getColCount(char* string, char* separator);
+void strip(char* string, char* character);
 #endif
