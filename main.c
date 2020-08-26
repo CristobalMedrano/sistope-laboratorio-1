@@ -6,12 +6,7 @@
 #include <constants.h>
 #include <functions.h>
 #include <options.h>
-#include <read.h>
-#include <grayscale.h>
-#include <convolution.h>
-#include <binarize.h>
-#include <classify.h>
-#include <write.h>
+#include <unistd.h>
 
 //Entradas: argc: Numero de argumentos ingresados al momento de ejecutar el programa.
 //          argv: Arreglo con los argumentos del programa.
@@ -44,6 +39,10 @@ int main(int argc, char *argv[]) {
     // Si los argumentos son correctos se inicia el pipeline
     if (isValidOpt == TRUE)
     {
+        // Se realiza un EXEC para reemplazar este proceso con la primera etapa del pipeline
+        char *args[] = {"read.out", argv[2], argv[4], argv[6], argv[8], argv[9], NULL};
+        execvp("src/pipeline/read.out", args);
+        /*
         // Se muestra el titulo de salida (Si es que el usuario asi lo ingreso). 
         showImageResultTitle(numberImages, flagShowResults);
         // Para cada imagen se le realiza el pipeline.

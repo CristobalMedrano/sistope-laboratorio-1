@@ -3,6 +3,12 @@
 #include <stdio.h>
 #include <jpeglib.h>
 #include <inttypes.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#define READ 0
+#define WRITE 1
 
 // Esta estructura contiene la informacion escencial de la imagen.
 // Esta definida tal cual como lo indica la libreria jpeglib.
@@ -144,10 +150,74 @@ Image readImage(int imageNumber){
     return image;
 }
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
+    /*
+        argv[1] -> Cantidad de imagenes
+        argv[2] -> Umbral de binarizacion
+        argv[3] -> Umbral de clasificacion
+        argv[4] -> Nombre de la mascara
+        argv[5] -> Mostrar resultados
+    */
+   
+    int numberImages = atoi(argv[1]);
+    int binarizationThreshold = atoi(argv[2]);
+    int classificationThreshold = atoi(argv[3]);
+    char* maskFilename = argv[4];
+    int flagShowResults = FALSE;
+    
+    if(argv[5] != NULL){
+        flagShowResults = TRUE;
+    }
+    
+    printf("Numero de imagenes: %d\n", numberImages);
+    printf("Umbral de binarizacion: %d\n", binarizationThreshold);
+    printf("Umbral de clasificacion: %d\n", classificationThreshold);
+    printf("Nombre de la mascara: %s\n", maskFilename);
+    if (flagShowResults == TRUE) printf("Mostrar resultados: Si\n");
+    if (flagShowResults == FALSE) printf("Mostrar resultados: No\n");
+    
     Image normalImage = {};
-    int imageNumber;
-    normalImage = readImage(imageNumber);
+    
+    // Se crea el pipe de read->grayscale (leer a escala de grises)
+    int pipedes[2];
+    pipe(pipedes);
+
+    // Se crea el hijo
+    pid_t pid = fork();
+    if (pid < 0){ 
+        // No se creo el hijo
+        perror("Existe un error en el Fork de 'read.c'\n");
+        exit(1);
+        
+    } else if (pid == 0){ 
+        // Soy el hijo
+        // Se conecta la STDIN del hijo con el read del pipe
+        dup2(pipedes[READ], STDIN_FILENO);
+        close(pipedes[READ]);
+        close(pipedes[WRITE]);
+
+        // Se realiza un EXEC para reemplazar este proceso con la segunda etapa del pipeline
+        char *args[] = {"grayscale.out", argv[1], argv[2], argv[3], argv[4], NULL};
+        execvp("src/pipeline/grayscale.out", args);
+
+    } else { 
+        // Soy el padre
+        int i = 0;
+        for (i = 1; i <= numberImages; i++)
+        {
+            // Se obtiene la imagen desde el archivo.
+            normalImage = readImage(i);
+            // Se libera la memoria utilizada, principalmente el buffer de cada imagen.
+            //free(normalImage.image_buffer);
+            
+            write(STDOUT_FILENO, &normalImage, sizeof(Image));
+        }
+        wait(NULL);
+        //
+
+    }
+    wait(NULL);
+
     return 0;
 }

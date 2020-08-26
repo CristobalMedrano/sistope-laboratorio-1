@@ -49,10 +49,17 @@ EXTERNAL_LIBRARIES = -lm -ljpeg
 SRCS = $(wildcard $(SOURCES)/*.c)
 OBJS = $(subst $(SOURCES)/, $(BUILD)/,$(patsubst %.c,%.o,$(SRCS)))
 MAIN = main
-GLOBAL_DEPENDS = $(HEADERS)/structs.h $(HEADERS)/constants.h
+GLOBAL_DEPENDS = $(HEADERS)/constants.h
+
+PIPELINE_MAKE = pipeline_make
+
 
 .SILENT: all clean $(EXECUTABLE)
-all: $(EXECUTABLE)
+all: $(EXECUTABLE) $(PIPELINE_MAKE)
+
+$(PIPELINE_MAKE): 
+	make -C $(SOURCES)/pipeline all
+	@echo Pipeline compilation done. Executable: $(EXECUTE)
 
 # Normal compilation
 $(EXECUTABLE): $(OBJS) $(BUILD)/$(MAIN).o
