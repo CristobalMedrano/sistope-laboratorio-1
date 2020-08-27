@@ -23,6 +23,7 @@ ifeq ($(OS_detected), Windows)
 	EXECUTE = $(EXECUTABLE)
     REMOVE = -del
 	FILES = $(BUILD)\*.o
+	PIPELINE_FILES = src\pipeline\*.out
 
 endif
 ifeq ($(OS_detected), Linux)
@@ -31,6 +32,7 @@ ifeq ($(OS_detected), Linux)
 	EXECUTE = ./$(EXECUTABLE)
     REMOVE = -rm -f
 	FILES = $(BUILD)/*.o
+	PIPELINE_FILES = src/pipeline/*.out
 endif
 
 #Modules, headers and build folders.
@@ -79,6 +81,7 @@ $(BUILD):
 clean:
 	$(REMOVE) $(FILES)
 	$(REMOVE) $(EXECUTABLE) debug_$(EXECUTABLE)
+	$(REMOVE) $(PIPELINE_FILES)
 	@echo Full wipe.
 
 .PHONY: clean

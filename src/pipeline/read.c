@@ -1,4 +1,4 @@
-// Librerías utilizadas
+// Bibliotecas utilizadas
 #include <stdlib.h>
 #include <stdio.h>
 #include <jpeglib.h>
@@ -7,6 +7,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// Se definen constantes para el pipe
 #define READ 0
 #define WRITE 1
 
@@ -141,7 +142,7 @@ Image readImage(int imageNumber){
     // Se realiza la lectura y valida su funcionamiento
     if (!readJPG(fileName, &image, &jerr)){
         // Se indica por pantalla en caso de error
-        printf("fallo readJPG");
+        fprintf(stderr, "fallo readJPG\n");
     }
     // Se muestra por pantalla los pixeles (se omite para efectos finales)
     //printPixels(image);
@@ -161,25 +162,16 @@ int main(int argc, char *argv[])
     */
    
     int numberImages = atoi(argv[1]);
-    int binarizationThreshold = atoi(argv[2]);
-    int classificationThreshold = atoi(argv[3]);
-    char* maskFilename = argv[4];
-    int flagShowResults = FALSE;
     
-    if(argv[5] != NULL){
-        flagShowResults = TRUE;
-    }
-    
-    printf("Numero de imagenes: %d\n", numberImages);
+    /*printf("Numero de imagenes: %d\n", numberImages);
     printf("Umbral de binarizacion: %d\n", binarizationThreshold);
     printf("Umbral de clasificacion: %d\n", classificationThreshold);
     printf("Nombre de la mascara: %s\n", maskFilename);
     if (flagShowResults == TRUE) printf("Mostrar resultados: Si\n");
-    if (flagShowResults == FALSE) printf("Mostrar resultados: No\n");
+    if (flagShowResults == FALSE) printf("Mostrar resultados: No\n");*/
+
     
-    Image normalImage = {};
-    
-    // Se crea el pipe de read->grayscale (leer a escala de grises)
+    // Se crea el pipe de read->grayscale (leer imagen a escala de grises)
     int pipedes[2];
     pipe(pipedes);
 
@@ -188,36 +180,43 @@ int main(int argc, char *argv[])
     if (pid < 0){ 
         // No se creo el hijo
         perror("Existe un error en el Fork de 'read.c'\n");
-        exit(1);
+        exit(-1);
         
-    } else if (pid == 0){ 
+    } else if (pid == 0){
         // Soy el hijo
-        // Se conecta la STDIN del hijo con el read del pipe
+
+        // Conexion entre la lectura del pipe y la entrada del hijo.
         dup2(pipedes[READ], STDIN_FILENO);
         close(pipedes[READ]);
         close(pipedes[WRITE]);
-
-        // Se realiza un EXEC para reemplazar este proceso con la segunda etapa del pipeline
-        char *args[] = {"grayscale.out", argv[1], argv[2], argv[3], argv[4], NULL};
-        execvp("src/pipeline/grayscale.out", args);
-
-    } else { 
+        // Se realiza un EXECVP para reemplazar este proceso con la segunda etapa (Escala de grises) del pipeline
+        char *args[] = {"grayscale.out", argv[1], argv[2], argv[3], argv[4], argv[5], NULL};
+        if (execvp("src/pipeline/grayscale.out", args) < 0) exit(0);
+    } else {
         // Soy el padre
+
+        // Conexion entre la escritura del pipe y la salida del padre.
+        dup2(pipedes[WRITE], STDOUT_FILENO);
+        close(pipedes[READ]);
+        close(pipedes[WRITE]);
+
         int i = 0;
         for (i = 1; i <= numberImages; i++)
         {
+            // Se inicializa en 0 la memoria de la imagen
+            Image normalImage = {};
+            normalImage.image_buffer = NULL;
+
             // Se obtiene la imagen desde el archivo.
             normalImage = readImage(i);
-            // Se libera la memoria utilizada, principalmente el buffer de cada imagen.
-            //free(normalImage.image_buffer);
+
+            int imageBufferLengthWrite = normalImage.height * normalImage.width * normalImage.color_channel * sizeof(int);
             
+            // Se escribe la imagen leida en la salida del padre.
             write(STDOUT_FILENO, &normalImage, sizeof(Image));
+            write(STDOUT_FILENO, normalImage.image_buffer, imageBufferLengthWrite);
         }
         wait(NULL);
-        //
-
     }
-    wait(NULL);
-
     return 0;
 }

@@ -1,8 +1,16 @@
-#include <stdio.h>
+//Bibliotecas utilizadas
 #include <stdlib.h>
-#include <stdint.h>
-#include <jpeglib.h>
+#include <stdio.h>
 #include <string.h>
+#include <jpeglib.h>
+#include <inttypes.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+// Se definen constantes para el pipe
+#define READ 0
+#define WRITE 1
 
 // Constantes para definir la cantidad de filas y columnas de la mascara
 #define MASK_ROW 3
@@ -43,7 +51,7 @@ void strip(char* string, char* character);
 //Salidas: Retorna una estructura con la imagen luego de aplicar el filtro laplaciano.
 Image applyLaplacianFilter(Image image, char* maskFilename){
     // Se inicializan las variables a utilizar
-    Image convertedImage;
+    Image convertedImage = {};
     int** laplacianFilter = NULL;
     int** imageMatrix = NULL;    
     int width = 0;
@@ -70,7 +78,6 @@ Image applyLaplacianFilter(Image image, char* maskFilename){
     convertedImage.height = image.height;
     convertedImage.width = image.width;
     convertedImage.color_channel = 1;
-    convertedImage.image_buffer = NULL;
     convertedImage.image_buffer = (JSAMPLE*) malloc(sizeof(int) *
                                     convertedImage.width  *
                                     convertedImage.height *
@@ -400,12 +407,111 @@ void strip(char* string, char* character){
     }
 }
 
-int main(int argc, char const *argv[])
+//Entrada:
+//  Image image: Estructura con imagen almacenada.
+//
+//Funcionamiento: Procedimiento que permite visualizar por pantalla información asociada
+//                a una imagen, como sus dimensiones, canales y pixeles.
+//
+//Salida: No tiene por ser procedimiento.
+void printPixels(Image image){
+    // Se muestra por pantalla el alto, ancho y los canales que posee la imagen de entrada.
+    fprintf(stderr, "width = %" PRIu32 "\n", image.width);
+    fprintf(stderr, "height = %" PRIu32 "\n", image.height);
+    fprintf(stderr, "channels = %" PRIu32 "\n", image.color_channel);
+    // Se inicializan variables
+    /*uint8_t num = 0;
+    int loc = 0;
+    // Se recorre la imagen e imprime por pantalla el valor de sus pixeles.
+    for (int i = 0; i < image.height; i++)
+    {
+        for (int j = 0; j < image.width*image.color_channel; j++)
+        {
+            num = image.image_buffer[loc];
+            fprintf(stderr, "%" PRId8 " ", num);
+            loc++;
+        }
+        fprintf(stderr, "\n");
+    }*/
+}
+
+int main(int argc, char *argv[])
 {
-    char* maskFilename = NULL;
-    Image grayScaleImage = {};
-    Image laplacianFilterImage = {};
-    laplacianFilterImage = applyLaplacianFilter(grayScaleImage, maskFilename);
-    //free(laplacianFilterImage.image_buffer);
+    /*
+        argv[1] -> Cantidad de imagenes
+        argv[2] -> Umbral de binarizacion
+        argv[3] -> Umbral de clasificacion
+        argv[4] -> Nombre de la mascara
+        argv[5] -> Mostrar resultados
+    */
+   
+    int numberImages = atoi(argv[1]);
+    char* maskFilename = argv[4];
+
+    // Se crea el pipe de convolution->binarize 
+    // (aplicacion del filtro laplaciano - convolucion a binarizar)
+    int pipedes[2];
+    pipe(pipedes);
+
+    // Se crea el hijo
+    pid_t pid = fork();
+    if (pid < 0){ 
+        // No se creo el hijo
+        perror("Existe un error en el Fork de 'grayscale.c'\n");
+        exit(1);
+        
+    } else if (pid == 0){ 
+        // Soy el hijo
+
+        // Conexion entre la lectura del pipe y la entrada del hijo.
+        dup2(pipedes[READ], STDIN_FILENO);
+        close(pipedes[READ]);
+        close(pipedes[WRITE]);
+        
+        // Se realiza un EXECVP para reemplazar este proceso con la tercera etapa 
+        // (Aplicación de un filtro laplaciano - Convolucion) del pipeline.
+        char *args[] = {"binarize.out", argv[1], argv[2], argv[3], argv[4], argv[5], NULL};
+        execvp("src/pipeline/binarize.out", args);
+
+    } else { 
+        // Soy el padre       
+        // Conexion entre la escritura del pipe y la salida del padre.
+        dup2(pipedes[WRITE], STDOUT_FILENO);
+        close(pipedes[READ]);
+        close(pipedes[WRITE]);
+
+        int i = 0;
+        for (i = 1; i <= numberImages; i++)
+        {
+            // Se inicializa en 0 la memoria de la imagen en escala de grises
+            Image grayScaleImage = {};
+
+            // Se lee la imagen en escala de grises desde el pipe
+            read(STDIN_FILENO, &grayScaleImage, sizeof(Image));
+
+            grayScaleImage.image_buffer = (JSAMPLE*) malloc(sizeof(int) *
+                                        grayScaleImage.width  *
+                                        grayScaleImage.height *
+                                        grayScaleImage.color_channel);
+            
+            int imageBufferLengthRead = grayScaleImage.height * grayScaleImage.width * grayScaleImage.color_channel * sizeof(int);            
+            read(STDIN_FILENO, grayScaleImage.image_buffer, imageBufferLengthRead);
+            
+
+            // Se inicializa en 0 la memoria de la imagen al aplicar el filtro laplaciano
+            Image laplacianFilterImage = {};
+            laplacianFilterImage.image_buffer = NULL;
+            
+            // Se aplica el filtro laplaciano a la imagen en escala de grises.            
+            laplacianFilterImage = applyLaplacianFilter(grayScaleImage, maskFilename);
+            int imageBufferLengthWrite = laplacianFilterImage.height * laplacianFilterImage.width * laplacianFilterImage.color_channel * sizeof(int);            
+
+            // Se libera la memoria usada en la imagen en escala de grises.
+            // Se escribe la imagen con el filtro laplaciano en la salida del padre.
+            write(STDOUT_FILENO, &laplacianFilterImage, sizeof(Image));
+            write(STDOUT_FILENO, laplacianFilterImage.image_buffer, imageBufferLengthWrite);
+        }
+        wait(NULL);
+    }
     return 0;
 }

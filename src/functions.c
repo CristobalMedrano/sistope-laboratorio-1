@@ -9,34 +9,58 @@
 #include <structs.h>
 #include <functions.h>
 
-//Entrada:
-//  Image image: Estructura con imagen almacenada.
+//Entradas:
+//  char* string: String
+//  char* character: Caracter a eliminar en el string ingresado.
 //
-//Funcionamiento: Procedimiento que permite visualizar por pantalla información asociada
-//                a una imagen, como sus dimensiones, canales y pixeles.
+//Funcionamiento: Procedimiento que elimina un caracter de un string (Similar a strip de python).
 //
-//Salida: No tiene por ser procedimiento.
-void printPixels(Image image){
-    // Se muestra por pantalla el alto, ancho y los canales que posee la imagen de entrada.
-    printf("width = %" PRIu32 "\n", image.width);
-    printf("height = %" PRIu32 "\n", image.height);
-    printf("channels = %" PRIu32 "\n", image.color_channel);
-    // Se inicializan variables
-    uint8_t num = 0;
-    int loc = 0;
-    // Se recorre la imagen e imprime por pantalla el valor de sus pixeles.
-    for (int i = 0; i < image.height; i++)
-    {
-        for (int j = 0; j < image.width*image.color_channel; j++)
-        {
-            num = image.image_buffer[loc];
-            printf("%" PRId8 " ", num);
-            loc++;
+//Salida: no tiene por ser procedimiento.
+void strip(char* string, char* character){
+    // Se inicializan las variables
+    char* token = NULL;
+    // Si el string es distinto de nulo
+    if (string != NULL){
+        // Se divide el string en el caracter ingresado.
+        // Reemplaza el caracter del string por un espacio vacio.
+        token = strtok(string, character);
+        // Recorre todo el string para eliminar ese caracter y sus repeticiones.
+        while( token != NULL ) {
+            token = strtok(NULL, character);
         }
-        printf("\n");
     }
 }
 
-
-
+//Entradas:
+//  int numberImages: Entero con el número de imagenes.
+//  int flagShowResults: Entero que representa la bandera de resultados
+//                       que indica si se deben mostrar los resultados por pantalla.
+//
+//Funcionamiento: Procedimiento encargado de mostrar por pantalla el inicio de la tabulación
+//                para la muestra de los resultados finales del programa.
+//
+//Salida: No tiene por tratarse de un procedimiento.
+void showImageResultTitle(int numberImages, int flagShowResults){
+    // En caso que se desee mostrar por pantalla los resultados o conclusión del programa
+    // Se imprime por pantalla las cabeceras de las columnas de la tabla de resultados
+    if (flagShowResults == TRUE){
+        fprintf(stderr, "\n");
+        if (BORDER == TRUE) {
+            if (numberImages >= 10){
+                fprintf(stderr, "|-----------------|---------------------|\n");
+            }else {
+                fprintf(stderr, "|----------------|---------------------|\n");
+            }
+        }
+        // Si el numero de imagenes tiene dos o más dígitos, se agranda el ancho de la columna "image"
+        // para una correcta alineación.
+        if (numberImages >= 10){
+            fprintf(stderr, "|      image      |     nearly black    |\n");
+            fprintf(stderr, "|-----------------|---------------------|\n");
+        } else {
+            fprintf(stderr, "|      image     |     nearly black    |\n");
+            fprintf(stderr, "|----------------|---------------------|\n");
+        }
+    }
+}
 
