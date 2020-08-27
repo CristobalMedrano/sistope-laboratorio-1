@@ -2,16 +2,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <jpeglib.h>
-#include <structs.h>
 #include <constants.h>
-#include <functions.h>
 #include <options.h>
-#include <read.h>
-#include <grayscale.h>
-#include <convolution.h>
-#include <binarize.h>
-#include <classify.h>
-#include <write.h>
 
 //Entradas: argc: Numero de argumentos ingresados al momento de ejecutar el programa.
 //          argv: Arreglo con los argumentos del programa.
@@ -28,14 +20,6 @@ int main(int argc, char *argv[]) {
     int flagShowResults = FALSE;
     int isValidOpt = FALSE;
 
-    // Pipeline de 6 etapas.
-    int i = 0;
-    Image normalImage = {};
-    Image grayScaleImage = {};
-    Image laplacianFilterImage = {};
-    Image binarizedImage = {};
-    int isNearlyBlack = FALSE;
-
     // Obtencion de los argumentos ingresados por el usuario.
     getOptionsArguments(argc, argv, &numberImages, &binarizationThreshold, &classificationThreshold, &maskFilename, &flagShowResults);
     // Se validan los argumentos obtenidos de la funcion anterior
@@ -44,6 +28,7 @@ int main(int argc, char *argv[]) {
     // Si los argumentos son correctos se inicia el pipeline
     if (isValidOpt == TRUE)
     {
+        /*
         // Se muestra el titulo de salida (Si es que el usuario asi lo ingreso). 
         showImageResultTitle(numberImages, flagShowResults);
         // Para cada imagen se le realiza el pipeline.
@@ -72,7 +57,8 @@ int main(int argc, char *argv[]) {
         }
         // Se libera la memoria utilizada para obtener el nombre de la mascara.
         free(maskFilename);
-        // Se retorna 0 indicando que la ejecucion fue correcta.
+        // Se retorna 0 indicando que la ejecucion fue correcta. */
+        free(maskFilename);
         return SUCCESS;
     } else {
         // Se verifica que el nombre del archivo fue creado y se libera.

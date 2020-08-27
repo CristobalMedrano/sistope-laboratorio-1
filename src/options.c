@@ -7,8 +7,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <constants.h>
-#include <structs.h>
-#include <functions.h>
 #include <options.h>
 
 //Entradas: argc (int): Numero de argumentos ingresados al momento de ejecutar el programa.
@@ -481,5 +479,27 @@ int getRowCount(FILE* maskFile){
     } else {
         // Se retorna 0
         return 0;
+    }
+}
+
+//Entradas:
+//  char* string: String
+//  char* character: Caracter a eliminar en el string ingresado.
+//
+//Funcionamiento: Procedimiento que elimina un caracter de un string (Similar a strip de python).
+//
+//Salida: no tiene por ser procedimiento.
+void strip(char* string, char* character){
+    // Se inicializan las variables
+    char* token = NULL;
+    // Si el string es distinto de nulo
+    if (string != NULL){
+        // Se divide el string en el caracter ingresado.
+        // Reemplaza el caracter del string por un espacio vacio.
+        token = strtok(string, character);
+        // Recorre todo el string para eliminar ese caracter y sus repeticiones.
+        while( token != NULL ) {
+            token = strtok(NULL, character);
+        }
     }
 }
