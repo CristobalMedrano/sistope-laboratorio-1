@@ -5,6 +5,7 @@
 #include <jpeglib.h>
 #include <constants.h>
 #include <options.h>
+#include <functions.h>
 #include <unistd.h>
 
 //Entradas: argc: Numero de argumentos ingresados al momento de ejecutar el programa.

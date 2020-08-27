@@ -6,30 +6,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include <constants.h>
-#include <structs.h>
 #include <functions.h>
-
-//Entradas:
-//  char* string: String
-//  char* character: Caracter a eliminar en el string ingresado.
-//
-//Funcionamiento: Procedimiento que elimina un caracter de un string (Similar a strip de python).
-//
-//Salida: no tiene por ser procedimiento.
-void strip(char* string, char* character){
-    // Se inicializan las variables
-    char* token = NULL;
-    // Si el string es distinto de nulo
-    if (string != NULL){
-        // Se divide el string en el caracter ingresado.
-        // Reemplaza el caracter del string por un espacio vacio.
-        token = strtok(string, character);
-        // Recorre todo el string para eliminar ese caracter y sus repeticiones.
-        while( token != NULL ) {
-            token = strtok(NULL, character);
-        }
-    }
-}
 
 //Entradas:
 //  int numberImages: Entero con el número de imagenes.
