@@ -23,6 +23,7 @@ ifeq ($(OS_detected), Windows)
 	EXECUTE = $(EXECUTABLE)
     REMOVE = -del
 	FILES = $(BUILD)\*.o
+	PIPELINE_FILES = src\pipeline\*.out
 
 endif
 ifeq ($(OS_detected), Linux)
@@ -31,6 +32,7 @@ ifeq ($(OS_detected), Linux)
 	EXECUTE = ./$(EXECUTABLE)
     REMOVE = -rm -f
 	FILES = $(BUILD)/*.o
+	PIPELINE_FILES = src/pipeline/*.out
 endif
 
 #Modules, headers and build folders.
@@ -49,10 +51,17 @@ EXTERNAL_LIBRARIES = -lm -ljpeg
 SRCS = $(wildcard $(SOURCES)/*.c)
 OBJS = $(subst $(SOURCES)/, $(BUILD)/,$(patsubst %.c,%.o,$(SRCS)))
 MAIN = main
-GLOBAL_DEPENDS = $(HEADERS)/structs.h $(HEADERS)/constants.h
+GLOBAL_DEPENDS = $(HEADERS)/constants.h
+
+PIPELINE_MAKE = pipeline_make
+
 
 .SILENT: all clean $(EXECUTABLE)
-all: $(EXECUTABLE)
+all: $(EXECUTABLE) $(PIPELINE_MAKE)
+
+$(PIPELINE_MAKE): 
+	make -C $(SOURCES)/pipeline all
+	@echo Pipeline compilation done. Executable: $(EXECUTE)
 
 # Normal compilation
 $(EXECUTABLE): $(OBJS) $(BUILD)/$(MAIN).o
@@ -72,6 +81,7 @@ $(BUILD):
 clean:
 	$(REMOVE) $(FILES)
 	$(REMOVE) $(EXECUTABLE) debug_$(EXECUTABLE)
+	$(REMOVE) $(PIPELINE_FILES)
 	@echo Full wipe.
 
 .PHONY: clean

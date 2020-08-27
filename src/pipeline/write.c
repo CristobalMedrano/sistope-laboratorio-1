@@ -1,9 +1,17 @@
-//Librerías utilizadas
-#include <stdio.h>
+//Bibliotecas utilizadas
 #include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
+#include <stdio.h>
 #include <jpeglib.h>
+#include <string.h>
+#include <inttypes.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+
+// Se definen constantes para el pipe
+#define READ 0
+#define WRITE 1
 
 // Definicion de un booleano
 #define FALSE 0
@@ -49,7 +57,7 @@ void writeImage(Image image, int imageNumber){
     // Se realiza la escritura y valida su funcionamiento
     if (!writeJPG(&image, imageNumber, filename, &jerr)){
         // En caso de error, se muestra mensaje por pantalla.
-        printf("fallo writeJPG");
+        fprintf(stderr, "fallo writeJPG\n");;
     }
 }
 
@@ -71,7 +79,7 @@ int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mg
     // Se abre el archivo de entrada modo escritura con "b" para leer archivos binarios.
     FILE *fp = fopen(filename, "wb");
     if (fp == NULL) {
-        printf("Error al escribir el archivo %s\n", filename);
+        fprintf(stderr, "Error al escribir el archivo %s\n", filename);
         return FALSE;
     }
 
@@ -113,10 +121,86 @@ int writeJPG(Image* image, int imageNumber, char* filename, struct jpeg_error_mg
     return TRUE;
 }
 
-int main(int argc, char const *argv[])
+Image writedImage(Image image){
+    int totalComponents = 0;
+
+    Image currentBinarizedImage = {};
+    currentBinarizedImage.width = image.width;
+    currentBinarizedImage.height = image.height;
+    currentBinarizedImage.color_channel = image.color_channel;
+    currentBinarizedImage.image_buffer = NULL;
+    currentBinarizedImage.image_buffer = (JSAMPLE*) malloc(sizeof(int) *
+                                currentBinarizedImage.width  *
+                                currentBinarizedImage.height *
+                                currentBinarizedImage.color_channel);
+    // Se calcula el total de componentes de la imagen
+    totalComponents = image.height*image.width*image.color_channel;
+    int pos = 0;
+    int i = 0;
+    for (i = 0; i < totalComponents; i++)
+    {
+        currentBinarizedImage.image_buffer[pos] = image.image_buffer[pos];
+        pos++;
+    }
+    return currentBinarizedImage;
+    
+}
+
+void printPixels(Image image){
+    // Se muestra por pantalla el alto, ancho y los canales que posee la imagen de entrada.
+    fprintf(stderr, "width = %" PRIu32 "\n", image.width);
+    fprintf(stderr, "height = %" PRIu32 "\n", image.height);
+    fprintf(stderr, "channels = %" PRIu32 "\n", image.color_channel);
+    // Se inicializan variables
+    uint8_t num = 0;
+    int loc = 0;
+    // Se recorre la imagen e imprime por pantalla el valor de sus pixeles.
+    for (int i = 0; i < image.height; i++)
+    {
+        for (int j = 0; j < image.width*image.color_channel; j++)
+        {
+            num = image.image_buffer[loc];
+            fprintf(stderr, "%" PRId8 " ", num);
+            loc++;
+        }
+        fprintf(stderr, "\n");
+    }
+}
+
+int main(int argc, char *argv[])
 {
-    Image image;
-    int imageNumber;
-    writeImage(image, imageNumber);
+    /*
+        argv[1] -> Cantidad de imagenes
+        argv[2] -> Umbral de binarizacion
+        argv[3] -> Umbral de clasificacion
+        argv[4] -> Nombre de la mascara
+        argv[5] -> Mostrar resultados
+    */
+    int numberImages = atoi(argv[1]);
+
+    int i = 0;
+    for (i = 1; i <= numberImages; i++)
+    {
+        // Se inicializa en 0 la memoria de la imagen binarizada
+        Image binarizedImage = {};
+
+        // Se lee la imagen binarizada desde el pipe
+        read(STDIN_FILENO, &binarizedImage, sizeof(Image));
+        binarizedImage.image_buffer = (JSAMPLE*) malloc(sizeof(int) *
+                                    binarizedImage.width  *
+                                    binarizedImage.height *
+                                    binarizedImage.color_channel);
+
+        int imageBufferLengthRead = binarizedImage.height * binarizedImage.width * binarizedImage.color_channel * sizeof(int);            
+        read(STDIN_FILENO, binarizedImage.image_buffer, imageBufferLengthRead);
+
+        Image nextImage = {};
+        nextImage.image_buffer = NULL;
+
+        nextImage = writedImage(binarizedImage);
+
+        // Se escribe la imagen resultante en disco.
+        writeImage(nextImage, i);
+    }
     return 0;
 }
