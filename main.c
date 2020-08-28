@@ -1,17 +1,12 @@
+// Bibliotecas utilizadas
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <jpeglib.h>
-#include <structs.h>
 #include <constants.h>
-#include <functions.h>
 #include <options.h>
-#include <read.h>
-#include <grayscale.h>
-#include <convolution.h>
-#include <binarize.h>
-#include <classify.h>
-#include <write.h>
+#include <functions.h>
+#include <unistd.h>
 
 //Entradas: argc: Numero de argumentos ingresados al momento de ejecutar el programa.
 //          argv: Arreglo con los argumentos del programa.
@@ -29,12 +24,12 @@ int main(int argc, char *argv[]) {
     int isValidOpt = FALSE;
 
     // Pipeline de 6 etapas.
-    int i = 0;
+    /*int i = 0;
     Image normalImage = {};
     Image grayScaleImage = {};
     Image laplacianFilterImage = {};
     Image binarizedImage = {};
-    int isNearlyBlack = FALSE;
+    int isNearlyBlack = FALSE;*/
 
     // Obtencion de los argumentos ingresados por el usuario.
     getOptionsArguments(argc, argv, &numberImages, &binarizationThreshold, &classificationThreshold, &maskFilename, &flagShowResults);
@@ -44,35 +39,13 @@ int main(int argc, char *argv[]) {
     // Si los argumentos son correctos se inicia el pipeline
     if (isValidOpt == TRUE)
     {
-        // Se muestra el titulo de salida (Si es que el usuario asi lo ingreso). 
+        // Se realiza un EXEC para reemplazar este proceso con la primera etapa del pipeline
         showImageResultTitle(numberImages, flagShowResults);
-        // Para cada imagen se le realiza el pipeline.
-        for (i = 1; i <= numberImages; i++)
-        {
-            // Se obtiene la imagen desde el archivo.
-            normalImage = readImage(i);
-            // Se convierte la imagen a escala de grises.
-            grayScaleImage = convertGrayScale(normalImage);
-            // Se aplica el filtro laplaciano a la imagen en escala de grises.
-            laplacianFilterImage = applyLaplacianFilter(grayScaleImage, maskFilename);
-            // Se binariza la imagen segun el umbral ingresado por el usuario.
-            binarizedImage = binarizeImage(laplacianFilterImage, binarizationThreshold);
-            // Se analiza la propiedad segun el umbral ingresado por el usuario.
-            isNearlyBlack = classifyImage(binarizedImage, classificationThreshold);
-
-            // Si el usuario lo indica, se muestran los resultados por pantalla.
-            showImageResultBody(numberImages, i, flagShowResults, isNearlyBlack);
-            // Se escribe la imagen resultante en disco.
-            writeImage(binarizedImage, i);
-
-            // Se libera la memoria utilizada, principalmente el buffer de cada imagen.
-            free(normalImage.image_buffer);
-            free(grayScaleImage.image_buffer);
-            free(laplacianFilterImage.image_buffer);
-        }
-        // Se libera la memoria utilizada para obtener el nombre de la mascara.
+        char *args[] = {"read.out", argv[2], argv[4], argv[6], argv[8], argv[9], NULL};
+        execvp("src/pipeline/read.out", args);
+       
+        // Se retorna 0 indicando que la ejecucion fue correcta.*/
         free(maskFilename);
-        // Se retorna 0 indicando que la ejecucion fue correcta.
         return SUCCESS;
     } else {
         // Se verifica que el nombre del archivo fue creado y se libera.
