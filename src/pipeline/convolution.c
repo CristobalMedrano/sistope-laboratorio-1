@@ -407,34 +407,6 @@ void strip(char* string, char* character){
     }
 }
 
-//Entrada:
-//  Image image: Estructura con imagen almacenada.
-//
-//Funcionamiento: Procedimiento que permite visualizar por pantalla información asociada
-//                a una imagen, como sus dimensiones, canales y pixeles.
-//
-//Salida: No tiene por ser procedimiento.
-void printPixels(Image image){
-    // Se muestra por pantalla el alto, ancho y los canales que posee la imagen de entrada.
-    fprintf(stderr, "width = %" PRIu32 "\n", image.width);
-    fprintf(stderr, "height = %" PRIu32 "\n", image.height);
-    fprintf(stderr, "channels = %" PRIu32 "\n", image.color_channel);
-    // Se inicializan variables
-    /*uint8_t num = 0;
-    int loc = 0;
-    // Se recorre la imagen e imprime por pantalla el valor de sus pixeles.
-    for (int i = 0; i < image.height; i++)
-    {
-        for (int j = 0; j < image.width*image.color_channel; j++)
-        {
-            num = image.image_buffer[loc];
-            fprintf(stderr, "%" PRId8 " ", num);
-            loc++;
-        }
-        fprintf(stderr, "\n");
-    }*/
-}
-
 int main(int argc, char *argv[])
 {
     /*

@@ -35,6 +35,7 @@ typedef struct Image
 } Image;
 
 int classifyImage(Image image, int classificationThreshold);
+Image classifiedImage(Image image);
 void showImageResultTitle(int numberImages, int flagShowResults);
 void showImageResultBody(int numberImages, int imageNumber, int flagShowResults, int isNearlyBlack);
 
@@ -69,6 +70,12 @@ int classifyImage(Image image, int classificationThreshold){
     }
 }
 
+//Entradas:
+//  Image image: Estructura con la imagen proveniente de la cuarta etapa (binarización).
+//
+//Funcionamiento: Función encargada de copiar el buffer de una imagen.
+//
+//Salida: Retorna la estructura de una imagen.
 Image classifiedImage(Image image){
     int totalComponents = 0;
 
@@ -142,28 +149,6 @@ void showImageResultBody(int numberImages, int imageNumber, int flagShowResults,
         fprintf(stderr, "\n");
     }
 }
-
-void printPixels(Image image){
-    // Se muestra por pantalla el alto, ancho y los canales que posee la imagen de entrada.
-    fprintf(stderr, "width = %" PRIu32 "\n", image.width);
-    fprintf(stderr, "height = %" PRIu32 "\n", image.height);
-    fprintf(stderr, "channels = %" PRIu32 "\n", image.color_channel);
-    // Se inicializan variables
-    uint8_t num = 0;
-    int loc = 0;
-    // Se recorre la imagen e imprime por pantalla el valor de sus pixeles.
-    for (int i = 0; i < image.height; i++)
-    {
-        for (int j = 0; j < image.width*image.color_channel; j++)
-        {
-            num = image.image_buffer[loc];
-            fprintf(stderr, "%" PRId8 " ", num);
-            loc++;
-        }
-        fprintf(stderr, "\n");
-    }
-}
-
 
 int main(int argc, char *argv[])
 {
@@ -255,4 +240,3 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
-
