@@ -20,7 +20,7 @@ void writeImage(Image image, int imageNumber){
     char filename[50] = "";
     char number[100];
     sprintf(number, "%d", imageNumber);
-    strcat(filename, "salida_imagen_");
+    strcat(filename, "out_");
     strcat(filename, number);
     strcat(filename, ".jpg");
     // Estructura para el manejador de errores JPEG

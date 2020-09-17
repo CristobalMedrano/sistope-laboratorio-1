@@ -18,7 +18,7 @@
 #define FAILURE 1
 
 // Opciones del get opt.
-#define MIN_OPTS 9
+#define MIN_OPTS 12
 #define ENDPTR_LEN 12
 #define MASKFILENAME_LEN 12
 // End Options

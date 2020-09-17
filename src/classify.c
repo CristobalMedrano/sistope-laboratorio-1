@@ -62,11 +62,11 @@ void showImageResultTitle(int numberImages, int flagShowResults){
         // Si el numero de imagenes tiene dos o más dígitos, se agranda el ancho de la columna "image"
         // para una correcta alineación.
         if (numberImages >= 10){
-            printf("|      image      |     nearly black    |\n");
-            printf("|-----------------|---------------------|\n");
+            printf("|      imagen      |     nearly black    |\n");
+            printf("|--------------.---|---------------------|\n");
         } else {
-            printf("|      image     |     nearly black    |\n");
-            printf("|----------------|---------------------|\n");
+            printf("|      imagen     |     nearly black    |\n");
+            printf("|-------------.---|---------------------|\n");
         }
     }
 }
@@ -90,20 +90,20 @@ void showImageResultBody(int numberImages, int imageNumber, int flagShowResults,
         if (imageNumber >= 10){
             if(isNearlyBlack == TRUE){
                 // Caso positivo
-                printf("|     image_%d   |         yes         |", imageNumber);
+                printf("|     imagen_%d   |         yes         |", imageNumber);
             }
             else{
                 // Caso negativo
-                printf("|     image_%d   |         no          |", imageNumber);
+                printf("|     imagen_%d   |         no          |", imageNumber);
             }
         } else {// En caso de tener menos de 10 imagenes
             if(isNearlyBlack == TRUE){
                 // Caso positivo
-                printf("|     image_%d    |         yes         |", imageNumber);
+                printf("|     imagen_%d    |         yes         |", imageNumber);
             }
             else{
                 // Caso negativo
-                printf("|     image_%d    |         no          |", imageNumber);
+                printf("|     imagen_%d    |         no          |", imageNumber);
             }
         } // Se manejan los bordes posterior a mostrar cada clasificación
         if (BORDER == TRUE && numberImages == imageNumber){

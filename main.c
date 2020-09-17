@@ -22,9 +22,11 @@
 int main(int argc, char *argv[]) {
     // Opciones ingresadas por el usuario.
     int numberImages = 0;
+    int threadNumber = 0;
     int binarizationThreshold = 0;
     int classificationThreshold = 0;
     char* maskFilename = NULL;
+    int bufferSize = 0;
     int flagShowResults = FALSE;
     int isValidOpt = FALSE;
 
@@ -37,9 +39,10 @@ int main(int argc, char *argv[]) {
     int isNearlyBlack = FALSE;
 
     // Obtencion de los argumentos ingresados por el usuario.
-    getOptionsArguments(argc, argv, &numberImages, &binarizationThreshold, &classificationThreshold, &maskFilename, &flagShowResults);
+    getOptionsArguments(argc, argv, &numberImages, &threadNumber, &binarizationThreshold, &classificationThreshold, &maskFilename, &bufferSize, &flagShowResults);
+
     // Se validan los argumentos obtenidos de la funcion anterior
-    isValidOpt = validateArgs(numberImages, binarizationThreshold, classificationThreshold, maskFilename);
+    isValidOpt = validateArgs(numberImages, threadNumber, binarizationThreshold, classificationThreshold, maskFilename, bufferSize);
 
     // Si los argumentos son correctos se inicia el pipeline
     if (isValidOpt == TRUE)

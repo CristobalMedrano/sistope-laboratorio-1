@@ -23,7 +23,7 @@
 //                obligatoria, el programa termina su ejecucion indicando el error por pantalla.
 //
 //Salidas: Vacia, se retornan los datos por referencia.
-void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binarizationThreshold, int* classificationThreshold, char** maskFilename, int* flagShowResults) {
+void getOptionsArguments(int argc, char *argv[], int* numberImages, int* threadNumber, int* binarizationThreshold, int* classificationThreshold, char** maskFilename, int* bufferSize, int* flagShowResults) {
     // Se inicializan los datos
     int option = 0;
     char* endptr = NULL;
@@ -37,7 +37,7 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
         exit(EXIT_FAILURE);
     } else {
         // Se leen las opciones ingresadas por el usuario
-        while ((option = getopt(argc, argv, "c:u:n:m:b")) != -1) {
+        while ((option = getopt(argc, argv, "c:h:u:n:m:b:f")) != -1) {
             switch (option) {
             case 'c':
                 argument = strtol(optarg, &endptr, ENDPTR_LEN);
@@ -51,6 +51,20 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                     if (!isInteger(optarg, "la cantidad de imagenes")) exit(EXIT_FAILURE);
                     // Se retorna por referencia el valor de imagenes a leer.
                     *numberImages = atoi(optarg);
+                }
+                break;
+            case 'h':
+                argument = strtol(optarg, &endptr, ENDPTR_LEN);
+                // Se verifica si la opcion tiene acompaniado un argumento, de no ser asi, se termina
+                // la ejecucion del programa indicando previamente el error.
+                if (optarg != 0 && argument == 0 && strcmp(endptr, "") != 0) {
+                    showCorrectUse(argv);
+                    exit(EXIT_FAILURE);
+                } else {
+                    // Se verifica que sea un entero el valor ingresado, sino, el programa termina su ejecucion.
+                    if (!isInteger(optarg, "cantidad de hebras")) exit(EXIT_FAILURE);
+                    // Se retorna por referencia el valor para el umbral de clasificacion.
+                    *threadNumber = atoi(optarg);
                 }
                 break;
             case 'u':
@@ -98,6 +112,21 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
                 }
                 break;
             case 'b':
+                argument = strtol(optarg, &endptr, ENDPTR_LEN);
+                // Se verifica si la opcion tiene acompaniado un argumento, de no ser asi, se termina
+                // la ejecucion del programa indicando previamente el error.
+                if (optarg != 0 && argument == 0 && strcmp(endptr, "") != 0) {
+                    showCorrectUse(argv);
+                    exit(EXIT_FAILURE);
+                } else {
+                    // Se verifica que sea un entero el valor ingresado, sino, el programa termina su ejecucion.
+                    if (!isInteger(optarg, "el tamanio del buffer")) exit(EXIT_FAILURE);
+                    // Se retorna por referencia el valor para el umbral de clasificacion.
+                    *bufferSize = atoi(optarg);
+                }
+                break;
+
+            case 'f':
                 // Al ser un argumento opcional, se retorna directamente el valor, en caso de encontrarse en las opciones.
                 *flagShowResults = TRUE;
                 break;
@@ -119,7 +148,7 @@ void getOptionsArguments(int argc, char *argv[], int* numberImages, int* binariz
 void showCorrectUse(char *argv[]){
     // Se muestra el error por pantalla.
     printf("ERROR. Se ingreso un numero incorrecto de opciones/argumentos\n");
-    fprintf(stderr, "Uso: %s [-c cantidad de imagenes] [-u umbral binarizacion] [-n umbral clasificacion] [-m mascara] [-b]\n", argv[0]);
+    fprintf(stderr, "Uso: %s [-c cantidad de imagenes] [-h numero hebras] [-u umbral binarizacion] [-n umbral clasificacion] [-m mascara] [-b tamanio buffer] [-f]\n", argv[0]);
 }
 
 //Entradas: optarg (char*): String que contiene la opcion ingresada por el usuario.
@@ -166,12 +195,19 @@ int isInteger(char* optarg, char* type)
 //Funcionamiento: Verifica el estado de validacion de cada argumento.
 //
 //Salidas: Retorna TRUE (1) si todos los argumentos son validos o retorna FALSE (0) si algun argumento es incorrecto.
-int validateArgs(int numberImages, int binarizationThreshold, int classificationThreshold, char* maskFilename){
+int validateArgs(int numberImages, int threadNumber, int binarizationThreshold, int classificationThreshold, char* maskFilename, int bufferSize){
     int validation1 = validateNumberImages(numberImages);
     int validation2 = validateBinarizationThreshold(binarizationThreshold);
     int validation3 = validateClassificationThreshold(classificationThreshold);
     int validation4 = validateMaskFile(maskFilename);
-    if (validation1 == TRUE && validation2 == TRUE && validation3 == TRUE && validation4 == TRUE)
+    int validation5 = validateBufferSize(bufferSize);
+    int validation6 = validateThreadNumber(threadNumber);
+    if (validation1 == TRUE && 
+        validation2 == TRUE &&
+        validation3 == TRUE &&
+        validation4 == TRUE &&
+        validation5 == TRUE &&
+        validation6 == TRUE)
     {
         return TRUE;
     }else
@@ -482,4 +518,36 @@ int getRowCount(FILE* maskFile){
         // Se retorna 0
         return 0;
     }
+}
+
+//Entradas: bufferSize (int): Entero con el tamanio del buffer.
+//
+//Funcionamiento: Valida si el tamanio del buffer es correcto. (Entero positivo)
+//
+//Salidas: Retorna verdadero (TRUE 1) si el tamanio del buffer es correto y falso (FALSE 0) si el tamanio del buffer es incorrecto.
+int validateBufferSize(int bufferSize){
+    // Se valida si a caso el tamanio del buffer es negativo
+    if (bufferSize <= 0){
+        // de ser asi se muestra el error por pantalla.
+        printf("ERROR. Tamanio del buffer (0 o negativo).\n");
+        // se retorna falso.
+        return FALSE;
+    }
+    return TRUE;
+}
+
+//Entradas: threadNumber (int): Entero con el numero de hebras.
+//
+//Funcionamiento: Valida si el numero de hebras es correcto. (Entero positivo)
+//
+//Salidas: Retorna verdadero (TRUE 1) si el numero de hebras es correto y falso (FALSE 0) si el numero de hebras es incorrecto.
+int validateThreadNumber(int threadNumber){
+    // Se valida si a caso el numero de hebras es negativo
+    if (threadNumber <= 0){
+        // de ser asi se muestra el error por pantalla.
+        printf("ERROR. Numero de hebras (0 o negativo).\n");
+        // se retorna falso.
+        return FALSE;
+    }
+    return TRUE;
 }
